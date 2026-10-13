@@ -12,8 +12,12 @@ import {
   Calendar,
   Phone,
   CalendarDays,
-  Unlink,
-  Check
+  Settings,
+  Check,
+  Trash2,
+  PenTool,
+  MousePointer,
+  HelpCircle
 } from 'lucide-react';
 
 export const CapoSalaView: React.FC = () => {
@@ -22,7 +26,9 @@ export const CapoSalaView: React.FC = () => {
     tables,
     reservations,
     updateTable,
+    updateAllTables,
     createZone,
+    deleteZone,
     createReservation,
     toggleEndSeat,
     setCurrentRole,
@@ -32,13 +38,51 @@ export const CapoSalaView: React.FC = () => {
     setSelectedDate
   } = useApp();
 
-  // Dimensioni locale: 500 m² (Quadrato da 22.5m x 22.5m ≈ 506 m², o 20m x 25m)
-  const [floorWidth, setFloorWidth] = useState<number>(22.5);
-  const [floorHeight, setFloorHeight] = useState<number>(22.5);
+  // Dimensioni locale: 500 m² (Quadrato da 22.5m x 22.5m ≈ 506 m²)
+  const floorWidth = 22.5;
+  const floorHeight = 22.5;
   const GRID_STEP = 0.5; // Risoluzione griglia 0.5m x 0.5m
 
-  // Selected table
-  const selectedTable = tables.find(t => t.id === activeTableId) || null;
+  // MODALITÀ MODIFICA STRUTTURA DI DEFAULT (si ripete per tutti i giorni)
+  const [isEditingDefaultLayout, setIsEditingDefaultLayout] = useState(false);
+
+  // DETTAGLIO SCHEDA TAVOLO: APRE SOLO AL DOPPIO CLICK / DOPPIO TOCCO!
+  const [openTableDetailsId, setOpenTableDetailsId] = useState<string | null>(null);
+  const selectedTable = tables.find(t => t.id === openTableDetailsId) || null;
+
+  // MODALITÀ TRACCIAMENTO ZONA CON MOUSE O DITO
+  const [isDrawingZoneMode, setIsDrawingZoneMode] = useState(false);
+  const [drawingStart, setDrawingStart] = useState<{ x: number; y: number } | null>(null);
+  const [drawingCurrent, setDrawingCurrent] = useState<{ x: number; y: number } | null>(null);
+
+  // Modal Conferma Salvataggio Zona Tracciata
+  const [showSaveZoneModal, setShowSaveZoneModal] = useState(false);
+  const [newZoneData, setNewZoneData] = useState<{ x: number; y: number; width: number; height: number }>({
+    x: 0,
+    y: 0,
+    width: 4,
+    height: 4
+  });
+  const [newZoneName, setNewZoneName] = useState('');
+  const [newZoneColor, setNewZoneColor] = useState('#f97316');
+
+  // Modal Zone List (per eliminare comodamente le zone)
+  const [showZoneManagerModal, setShowZoneManagerModal] = useState(false);
+
+  // Booking Form State
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [resCustomerName, setResCustomerName] = useState('');
+  const [resPhone, setResPhone] = useState('');
+  const [resTime, setResTime] = useState('20:30');
+
+  // Dragging state on 0.5m x 0.5m grid
+  const [draggingTableId, setDraggingTableId] = useState<string | null>(null);
+  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+
+  // Double tap detection ref per smartphone/tablet
+  const lastTapRef = useRef<{ id: string; time: number }>({ id: '', time: 0 });
+  const dragHasMovedRef = useRef<boolean>(false);
 
   // Prenotazioni filtrate per la data selezionata
   const dayReservations = reservations.filter(r => {
@@ -48,7 +92,7 @@ export const CapoSalaView: React.FC = () => {
 
   const activeReservation = dayReservations.find(r => r.tableId === selectedTable?.id);
 
-  // Auto-fit zoom calculation per 500 m²
+  // Auto-fit zoom calculation
   const calculateFitZoom = () => {
     if (typeof window === 'undefined') return 18;
     const paddingX = window.innerWidth < 768 ? 20 : 48;
@@ -73,42 +117,18 @@ export const CapoSalaView: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Modals state
-  const [showNewZoneModal, setShowNewZoneModal] = useState(false);
-  const [newZoneName, setNewZoneName] = useState('');
-  const [newZoneX, setNewZoneX] = useState(1);
-  const [newZoneY, setNewZoneY] = useState(1);
-  const [newZoneWidth, setNewZoneWidth] = useState(8);
-  const [newZoneHeight, setNewZoneHeight] = useState(7);
-  const [newZoneColor, setNewZoneColor] = useState('#f97316');
-
-  // Booking Form State
-  const [showBookingForm, setShowBookingForm] = useState(false);
-  const [resCustomerName, setResCustomerName] = useState('');
-  const [resPhone, setResPhone] = useState('');
-  const [resTime, setResTime] = useState('20:30');
-
-  // Dragging state on 0.5m x 0.5m grid
-  const [draggingTableId, setDraggingTableId] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-
   // ALGORITMO AUTOMATICO TAVOLATE:
-  // Se due tavoli 1x1 toccano (coincidenti o adiacenti entro tolleranza), diventano AUTOMATICAMENTE una tavolata!
+  // Se due tavoli 1x1 toccano (coincidenti o adiacenti), diventano AUTOMATICAMENTE una tavolata!
   const syncAutoTavolate = (allTables: RestaurantTable[]) => {
     const isTouching = (a: RestaurantTable, b: RestaurantTable) => {
       const dx = Math.abs(a.x - b.x);
       const dy = Math.abs(a.y - b.y);
-      // Adiacenza orizzontale (condividono il lato verticale)
       const isH = Math.abs(dx - 1.0) < 0.15 && dy < 0.6;
-      // Adiacenza verticale (condividono il lato orizzontale)
       const isV = Math.abs(dy - 1.0) < 0.15 && dx < 0.6;
-      // Coincidenti / quasi sovrapposti
       const isCoincident = dx < 0.6 && dy < 0.6;
       return isH || isV || isCoincident;
     };
 
-    // Costruisci grafo di adiacenza
     const adj: Record<string, string[]> = {};
     allTables.forEach(t => { adj[t.id] = []; });
     for (let i = 0; i < allTables.length; i++) {
@@ -120,7 +140,6 @@ export const CapoSalaView: React.FC = () => {
       }
     }
 
-    // Componenti connesse (BFS)
     const visited = new Set<string>();
     allTables.forEach(t => {
       if (!visited.has(t.id)) {
@@ -158,14 +177,16 @@ export const CapoSalaView: React.FC = () => {
     });
   };
 
-  // Tavolata members del tavolo selezionato
+  // Tavolata members del tavolo aperto
   const tavolataMembers = selectedTable?.tavolataGroupId
     ? tables.filter(t => t.tavolataGroupId === selectedTable.tavolataGroupId)
     : [];
   const tavolataTotalSeats = tavolataMembers.reduce((sum, t) => sum + t.seats, 0);
 
-  // Drag table handlers
+  // START DRAG TAVOLO (SE NON STIAMO TRACCIANDO UNA ZONA)
   const handleStartDrag = (clientX: number, clientY: number, table: RestaurantTable) => {
+    if (isDrawingZoneMode) return;
+    dragHasMovedRef.current = false;
     setActiveTableId(table.id);
     setDraggingTableId(table.id);
     if (gridContainerRef.current) {
@@ -179,13 +200,26 @@ export const CapoSalaView: React.FC = () => {
     }
   };
 
+  // MOVE DRAG TAVOLO
   const handleMoveDrag = (clientX: number, clientY: number) => {
+    // Se stiamo tracciando una zona:
+    if (isDrawingZoneMode && drawingStart && gridContainerRef.current) {
+      const rect = gridContainerRef.current.getBoundingClientRect();
+      const rawX = (clientX - rect.left) / zoomLevel;
+      const rawY = (clientY - rect.top) / zoomLevel;
+      const snappedX = Math.max(0, Math.min(floorWidth, Math.round(rawX / GRID_STEP) * GRID_STEP));
+      const snappedY = Math.max(0, Math.min(floorHeight, Math.round(rawY / GRID_STEP) * GRID_STEP));
+      setDrawingCurrent({ x: snappedX, y: snappedY });
+      return;
+    }
+
+    // Se stiamo trascinando un tavolo:
     if (!draggingTableId || !gridContainerRef.current) return;
+    dragHasMovedRef.current = true;
     const rect = gridContainerRef.current.getBoundingClientRect();
     const rawX = (clientX - rect.left) / zoomLevel - dragOffset.x;
     const rawY = (clientY - rect.top) / zoomLevel - dragOffset.y;
 
-    // SNAP A RISOLUZIONE 0.5 METRI
     const snappedX = Math.round(rawX / GRID_STEP) * GRID_STEP;
     const snappedY = Math.round(rawY / GRID_STEP) * GRID_STEP;
 
@@ -199,12 +233,74 @@ export const CapoSalaView: React.FC = () => {
     }
   };
 
+  // END DRAG TAVOLO O FINE TRACCIAMENTO ZONA
   const handleEndDrag = () => {
+    // Fine tracciamento zona
+    if (isDrawingZoneMode && drawingStart && drawingCurrent) {
+      const minX = Math.min(drawingStart.x, drawingCurrent.x);
+      const minY = Math.min(drawingStart.y, drawingCurrent.y);
+      const w = Math.abs(drawingCurrent.x - drawingStart.x);
+      const h = Math.abs(drawingCurrent.y - drawingStart.y);
+
+      if (w >= 1.0 && h >= 1.0) {
+        setNewZoneData({ x: minX, y: minY, width: w, height: h });
+        setNewZoneName(`Zona ${zones.length + 1}`);
+        setShowSaveZoneModal(true);
+      }
+      setDrawingStart(null);
+      setDrawingCurrent(null);
+      return;
+    }
+
+    // Fine trascinamento tavolo
     if (draggingTableId) {
       setDraggingTableId(null);
-      // RICALCOLA AUTOMATICAMENTE LE TAVOLATE DOPO LO SPOSTAMENTO
       syncAutoTavolate(tables);
     }
+  };
+
+  // TOUCH END / DOUBLE TAP HANDLER SUI TAVOLI (SOLO DOPPIO CLICK APRE LA SCHEDA!)
+  const handleTableTouchEnd = (tableId: string) => {
+    if (dragHasMovedRef.current) {
+      dragHasMovedRef.current = false;
+      return;
+    }
+    const now = Date.now();
+    if (lastTapRef.current.id === tableId && now - lastTapRef.current.time < 350) {
+      // Doppio tocco rilevato su smartphone / tablet!
+      setOpenTableDetailsId(tableId);
+      lastTapRef.current = { id: '', time: 0 };
+    } else {
+      lastTapRef.current = { id: tableId, time: now };
+    }
+  };
+
+  // START DRAW ZONE (MOUSE O TOUCH)
+  const handleCanvasMouseDown = (clientX: number, clientY: number) => {
+    if (!isDrawingZoneMode || !gridContainerRef.current) return;
+    const rect = gridContainerRef.current.getBoundingClientRect();
+    const rawX = (clientX - rect.left) / zoomLevel;
+    const rawY = (clientY - rect.top) / zoomLevel;
+    const snappedX = Math.max(0, Math.min(floorWidth, Math.round(rawX / GRID_STEP) * GRID_STEP));
+    const snappedY = Math.max(0, Math.min(floorHeight, Math.round(rawY / GRID_STEP) * GRID_STEP));
+    setDrawingStart({ x: snappedX, y: snappedY });
+    setDrawingCurrent({ x: snappedX, y: snappedY });
+  };
+
+  const handleSaveDrawnZone = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newZoneName) return;
+    createZone({
+      id: `z-${Date.now()}`,
+      name: newZoneName,
+      x: newZoneData.x,
+      y: newZoneData.y,
+      widthMeters: newZoneData.width,
+      heightMeters: newZoneData.height,
+      colorTheme: newZoneColor
+    });
+    setShowSaveZoneModal(false);
+    setIsDrawingZoneMode(false);
   };
 
   const handleAddTable = () => {
@@ -226,20 +322,11 @@ export const CapoSalaView: React.FC = () => {
     setTimeout(() => syncAutoTavolate([...tables, newTable]), 100);
   };
 
-  const handleCreateZone = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newZoneName) return;
-    createZone({
-      id: `z-${Date.now()}`,
-      name: newZoneName,
-      x: Number(newZoneX),
-      y: Number(newZoneY),
-      widthMeters: Number(newZoneWidth),
-      heightMeters: Number(newZoneHeight),
-      colorTheme: newZoneColor
-    });
-    setShowNewZoneModal(false);
-    setNewZoneName('');
+  const handleDeleteSelectedTable = (tableId: string) => {
+    const filtered = tables.filter(t => t.id !== tableId);
+    updateAllTables(filtered);
+    setOpenTableDetailsId(null);
+    setActiveTableId(null);
   };
 
   const handleChangeStatus = (status: TableStatus) => {
@@ -268,7 +355,7 @@ export const CapoSalaView: React.FC = () => {
       reservationTime: resTime,
       expectedDurationMinutes: 90,
       status: 'CONFERMATA',
-      date: selectedDate, // ASSOCIATA ALLA GIORNATA SELEZIONATA
+      date: selectedDate,
       createdAt: new Date().toISOString()
     };
     createReservation(newRes);
@@ -284,7 +371,6 @@ export const CapoSalaView: React.FC = () => {
     setCurrentRole('CAMERIERE');
   };
 
-  // Helper date selector
   const todayStr = new Date().toISOString().split('T')[0];
   const tomorrowStr = new Date(Date.now() + 86400000).toISOString().split('T')[0];
   const dayAfterStr = new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0];
@@ -299,55 +385,119 @@ export const CapoSalaView: React.FC = () => {
     <div className="h-full flex flex-col lg:flex-row bg-zinc-950 text-zinc-100 select-none overflow-hidden">
       {/* AREA PLANIMETRIA */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Minimal Toolbar con Selettore Data e Zoom */}
-        <div className="px-3 py-2 bg-zinc-900 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-2">
-          {/* Selettore Giornata */}
-          <div className="flex items-center space-x-1.5">
-            <CalendarDays className="w-4 h-4 text-orange-400 shrink-0" />
-            <div className="flex items-center space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs">
-              <button
-                onClick={() => setSelectedDate(todayStr)}
-                className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
-                  selectedDate === todayStr ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                Oggi
-              </button>
-              <button
-                onClick={() => setSelectedDate(tomorrowStr)}
-                className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
-                  selectedDate === tomorrowStr ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                Domani
-              </button>
-              <button
-                onClick={() => setSelectedDate(dayAfterStr)}
-                className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
-                  selectedDate === dayAfterStr ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                +2 gg
-              </button>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-transparent text-zinc-300 font-mono text-xs px-1 focus:outline-none cursor-pointer"
-              />
-            </div>
-            {dayReservations.length > 0 && (
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                {dayReservations.length} prenotati
-              </span>
-            )}
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-lg bg-zinc-800 text-orange-400 font-bold border border-zinc-700/80 hidden sm:inline">
-              📐 500 m² ({floorWidth}m x {floorHeight}m)
+        {/* BANNER MODALITÀ MODIFICA DEFAULT SE ATTIVA */}
+        {isEditingDefaultLayout && (
+          <div className="bg-amber-500/20 border-b border-amber-500/40 px-3 py-1.5 flex items-center justify-between text-xs text-amber-300">
+            <span className="font-bold flex items-center space-x-1.5">
+              <Settings className="w-3.5 h-3.5 animate-spin" />
+              <span>Modalità Modifica Struttura di Default (La disposizione salvata si ripeterà per ogni giornata)</span>
             </span>
+            <button
+              onClick={() => {
+                updateAllTables(tables);
+                setIsEditingDefaultLayout(false);
+              }}
+              className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-black font-extrabold rounded-lg flex items-center space-x-1 shadow-sm"
+            >
+              <Check className="w-3.5 h-3.5" />
+              <span>Salva e Chiudi Default</span>
+            </button>
           </div>
+        )}
 
-          {/* Zoom Controls & Aggiungi Tavolo */}
+        {/* Top Minimal Toolbar con Selettore Data, Struttura Default e Tracciamento Zone */}
+        <div className="px-3 py-2 bg-zinc-900 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-2">
+          {/* Selettore Giornata (visibile se non stiamo modificando il default) */}
+          {!isEditingDefaultLayout ? (
+            <div className="flex items-center space-x-1.5">
+              <CalendarDays className="w-4 h-4 text-orange-400 shrink-0" />
+              <div className="flex items-center space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs">
+                <button
+                  onClick={() => setSelectedDate(todayStr)}
+                  className={`px-2 py-1 rounded-lg font-bold transition-all ${
+                    selectedDate === todayStr ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  Oggi
+                </button>
+                <button
+                  onClick={() => setSelectedDate(tomorrowStr)}
+                  className={`px-2 py-1 rounded-lg font-bold transition-all ${
+                    selectedDate === tomorrowStr ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  Domani
+                </button>
+                <button
+                  onClick={() => setSelectedDate(dayAfterStr)}
+                  className={`px-2 py-1 rounded-lg font-bold transition-all ${
+                    selectedDate === dayAfterStr ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  +2 gg
+                </button>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="bg-transparent text-zinc-300 font-mono text-xs px-1 focus:outline-none cursor-pointer"
+                />
+              </div>
+              {dayReservations.length > 0 && (
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                  {dayReservations.length} prenotati
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className="font-extrabold text-sm text-white flex items-center space-x-2">
+              <span>Struttura Tavoli Master</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                Default tutti i giorni
+              </span>
+            </div>
+          )}
+
+          {/* Azioni Principali: Modifica Default, Traccia Zona, Gestione Zone */}
           <div className="flex items-center space-x-1.5">
+            {/* TASTO MODIFICA STRUTTURA DI DEFAULT */}
+            <button
+              onClick={() => setIsEditingDefaultLayout(!isEditingDefaultLayout)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center space-x-1.5 ${
+                isEditingDefaultLayout
+                  ? 'bg-amber-500 text-black border-amber-400 shadow-md'
+                  : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-700'
+              }`}
+              title="Modifica il layout dei tavoli che si ripete per tutti i giorni"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>{isEditingDefaultLayout ? 'Fine Modifica Default' : 'Modifica Default'}</span>
+            </button>
+
+            {/* TASTO TRACCIA ZONA CON DITO O MOUSE */}
+            <button
+              onClick={() => setIsDrawingZoneMode(!isDrawingZoneMode)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center space-x-1.5 ${
+                isDrawingZoneMode
+                  ? 'bg-orange-500 text-white border-orange-400 shadow-md animate-pulse'
+                  : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border-zinc-700'
+              }`}
+              title="Disegna un rettangolo con dito o mouse per creare una zona"
+            >
+              <PenTool className="w-3.5 h-3.5" />
+              <span>{isDrawingZoneMode ? 'Traccia con Dito...' : 'Traccia Zona'}</span>
+            </button>
+
+            {/* GESTIONE ZONE (ELIMINA / VISUALIZZA) */}
+            <button
+              onClick={() => setShowZoneManagerModal(true)}
+              className="px-2 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white border border-zinc-700 text-xs font-semibold"
+              title="Gestisci ed elimina zone"
+            >
+              Zone ({zones.length})
+            </button>
+
+            {/* Zoom Controls */}
             <div className="flex items-center bg-zinc-800 rounded-lg p-0.5 border border-zinc-700/60">
               <button
                 onClick={() => setZoomLevel(Math.max(12, zoomLevel - 3))}
@@ -374,31 +524,39 @@ export const CapoSalaView: React.FC = () => {
             </div>
 
             <button
-              onClick={() => setShowNewZoneModal(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold border border-zinc-700 hidden sm:flex items-center space-x-1"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Zona</span>
-            </button>
-
-            <button
               onClick={handleAddTable}
               className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center space-x-1"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ Tavolo 1x1</span>
+              <span>+ Tavolo</span>
             </button>
           </div>
         </div>
 
-        {/* Canvas Planimetria 500 m² (con Risoluzione Griglia 0.5m x 0.5m) */}
+        {/* GUIDA RAPIDA MINIMALE SE IN MODALITÀ TRACCIAMENTO */}
+        {isDrawingZoneMode && (
+          <div className="bg-orange-500/20 text-orange-300 border-b border-orange-500/30 px-3 py-1 text-[11px] flex items-center justify-between">
+            <span>👉 Trascina il mouse o il dito sul quadrato per tracciare il rettangolo della nuova zona.</span>
+            <button onClick={() => setIsDrawingZoneMode(false)} className="underline text-orange-200">Annulla</button>
+          </div>
+        )}
+
+        {/* Canvas Planimetria 500 m² (22.5m x 22.5m, Risoluzione Griglia 0.5m x 0.5m) */}
         <div
-          className="flex-1 overflow-auto p-2 sm:p-4 bg-zinc-950 flex items-center justify-center relative touch-none"
+          className={`flex-1 overflow-auto p-2 sm:p-4 bg-zinc-950 flex items-center justify-center relative touch-none ${
+            isDrawingZoneMode ? 'cursor-crosshair' : 'cursor-default'
+          }`}
+          onMouseDown={(e) => handleCanvasMouseDown(e.clientX, e.clientY)}
+          onTouchStart={(e) => e.touches[0] && handleCanvasMouseDown(e.touches[0].clientX, e.touches[0].clientY)}
           onMouseMove={(e) => handleMoveDrag(e.clientX, e.clientY)}
-          onMouseUp={handleEndDrag}
           onTouchMove={(e) => e.touches[0] && handleMoveDrag(e.touches[0].clientX, e.touches[0].clientY)}
+          onMouseUp={handleEndDrag}
           onTouchEnd={handleEndDrag}
-          onClick={() => setActiveTableId(null)}
+          onClick={() => {
+            if (!isDrawingZoneMode) {
+              setActiveTableId(null);
+            }
+          }}
         >
           <div
             ref={gridContainerRef}
@@ -436,7 +594,7 @@ export const CapoSalaView: React.FC = () => {
               </span>
             ))}
 
-            {/* Zone all'interno del quadrato */}
+            {/* ZONE TRACCIATE NEL LOCALE */}
             {zones.map(zone => (
               <div
                 key={zone.id}
@@ -445,24 +603,59 @@ export const CapoSalaView: React.FC = () => {
                   top: `${zone.y * zoomLevel}px`,
                   width: `${zone.widthMeters * zoomLevel}px`,
                   height: `${zone.heightMeters * zoomLevel}px`,
-                  borderColor: `${zone.colorTheme}66`
+                  borderColor: `${zone.colorTheme}88`
                 }}
-                className="absolute rounded-xl border border-dashed bg-zinc-800/20 pointer-events-none p-1.5 flex flex-col justify-between"
+                className="absolute rounded-xl border border-dashed bg-zinc-800/25 p-1.5 flex flex-col justify-between group pointer-events-auto"
               >
-                <span
-                  style={{ color: zone.colorTheme }}
-                  className="text-[10px] font-bold uppercase tracking-wider truncate"
-                >
-                  {zone.name}
+                <div className="flex items-center justify-between">
+                  <span
+                    style={{ color: zone.colorTheme }}
+                    className="text-[10px] font-bold uppercase tracking-wider truncate"
+                  >
+                    {zone.name}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm(`Eliminare la zona "${zone.name}"?`)) {
+                        deleteZone(zone.id);
+                      }
+                    }}
+                    className="p-1 rounded bg-zinc-900/80 text-zinc-400 hover:text-rose-400 opacity-60 hover:opacity-100 transition-opacity"
+                    title="Elimina Zona"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+                <span className="text-[9px] font-mono text-zinc-500 self-end">
+                  {zone.widthMeters}m x {zone.heightMeters}m
                 </span>
               </div>
             ))}
 
-            {/* Tavoli 1m x 1m (Accorpamento Automatico in Tavolata se coincidenti/adiacenti) */}
+            {/* ANTEPRIMA RETTANGOLO DURANTE IL TRACCIAMENTO ZONA CON DITO/MOUSE */}
+            {isDrawingZoneMode && drawingStart && drawingCurrent && (
+              <div
+                style={{
+                  left: `${Math.min(drawingStart.x, drawingCurrent.x) * zoomLevel}px`,
+                  top: `${Math.min(drawingStart.y, drawingCurrent.y) * zoomLevel}px`,
+                  width: `${Math.max(1, Math.abs(drawingCurrent.x - drawingStart.x)) * zoomLevel}px`,
+                  height: `${Math.max(1, Math.abs(drawingCurrent.y - drawingStart.y)) * zoomLevel}px`
+                }}
+                className="absolute border-2 border-dashed border-orange-400 bg-orange-500/25 rounded-xl pointer-events-none z-30 flex items-center justify-center text-white font-mono text-xs font-bold shadow-lg"
+              >
+                <span>
+                  {Math.abs(drawingCurrent.x - drawingStart.x).toFixed(1)}m x {Math.abs(drawingCurrent.y - drawingStart.y).toFixed(1)}m
+                </span>
+              </div>
+            )}
+
+            {/* TAVOLI 1m x 1m: SPOSTAMENTO LIBERO; APRE LA SCHEDA SOLO AL DOPPIO CLICK! */}
             {tables.map(table => {
               const isSelected = activeTableId === table.id;
+              const isDetailsOpen = openTableDetailsId === table.id;
               const isTavolata = Boolean(table.tavolataGroupId);
-              const sizePx = zoomLevel * 1.0; // 1m x 1m = 2 quadratini di 0.5m
+              const sizePx = zoomLevel * 1.0;
               const leftPx = table.x * zoomLevel;
               const topPx = table.y * zoomLevel;
 
@@ -484,31 +677,45 @@ export const CapoSalaView: React.FC = () => {
                     e.stopPropagation();
                     if (e.touches[0]) handleStartDrag(e.touches[0].clientX, e.touches[0].clientY, table);
                   }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    handleTableTouchEnd(table.id);
+                  }}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    // DOPPIO CLICK APRE LA SCHEDA TAVOLO!
+                    setOpenTableDetailsId(table.id);
+                  }}
                   style={{
                     width: `${sizePx}px`,
                     height: `${sizePx}px`,
                     left: `${leftPx}px`,
                     top: `${topPx}px`
                   }}
-                  className={`absolute border-2 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer shadow-md select-none ${statusClasses} ${
-                    isSelected ? 'ring-2 ring-white scale-105 z-30' : 'z-20'
+                  className={`absolute border-2 rounded-xl flex flex-col items-center justify-center transition-all cursor-grab active:cursor-grabbing shadow-md select-none ${statusClasses} ${
+                    isDetailsOpen
+                      ? 'ring-2 ring-white scale-105 z-30'
+                      : isSelected
+                      ? 'ring-1 ring-white/70 z-25'
+                      : 'z-20'
                   }`}
+                  title="Trascina per spostare • Doppio click per aprire scheda tavolo"
                 >
                   {/* Sedia Alto (Posto 1) */}
-                  <div className="absolute -top-1 w-3 h-1 rounded-full bg-zinc-400/80" />
+                  <div className="absolute -top-1 w-3 h-1 rounded-full bg-zinc-400/80 pointer-events-none" />
                   {/* Sedia Basso (Posto 2) */}
-                  <div className="absolute -bottom-1 w-3 h-1 rounded-full bg-zinc-400/80" />
+                  <div className="absolute -bottom-1 w-3 h-1 rounded-full bg-zinc-400/80 pointer-events-none" />
                   {/* Sedia Estremo (3° posto opzionale) */}
                   {table.hasEndSeat && (
-                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-full bg-amber-400" />
+                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-full bg-amber-400 pointer-events-none" />
                   )}
 
-                  <span className="text-[11px] font-black leading-none">T{table.number}</span>
-                  <span className="text-[9px] font-bold opacity-80 mt-0.5">{table.seats}p</span>
+                  <span className="text-[11px] font-black leading-none pointer-events-none">T{table.number}</span>
+                  <span className="text-[9px] font-bold opacity-80 mt-0.5 pointer-events-none">{table.seats}p</span>
 
                   {/* Badge Tavolata Automatica */}
                   {isTavolata && (
-                    <span className="absolute -top-2 bg-purple-600 text-white text-[8px] font-black px-1 rounded-sm shadow-sm uppercase">
+                    <span className="absolute -top-2 bg-purple-600 text-white text-[8px] font-black px-1 rounded-sm shadow-sm uppercase pointer-events-none">
                       UNITA
                     </span>
                   )}
@@ -519,7 +726,7 @@ export const CapoSalaView: React.FC = () => {
         </div>
       </div>
 
-      {/* PANNELLO TAVOLO (Bottom Sheet Mobile / Sidebar Desktop) */}
+      {/* SCHEDA DETTAGLIO TAVOLO (APRE SOLO AL DOPPIO CLICK / DOPPIO TOCCO) */}
       {selectedTable && (
         <div className="fixed inset-x-0 bottom-14 lg:bottom-0 lg:relative lg:inset-auto z-40 lg:w-80 bg-zinc-900 border-t lg:border-t-0 lg:border-l border-zinc-800 p-4 space-y-3.5 shadow-2xl rounded-t-2xl lg:rounded-none max-h-[75vh] lg:max-h-none overflow-y-auto">
           {/* Header */}
@@ -539,7 +746,7 @@ export const CapoSalaView: React.FC = () => {
                 </span>
               )}
             </div>
-            <button onClick={() => setActiveTableId(null)} className="p-1 rounded-lg text-zinc-400 hover:text-white">
+            <button onClick={() => setOpenTableDetailsId(null)} className="p-1 rounded-lg text-zinc-400 hover:text-white">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -555,7 +762,7 @@ export const CapoSalaView: React.FC = () => {
 
           {/* Toggle Rapido Posti (2 o 3 persone agli estremi) */}
           <div>
-            <span className="text-[11px] font-semibold text-zinc-400 block mb-1">Capacità Tavolo 1m:</span>
+            <span className="text-[11px] font-semibold text-zinc-400 block mb-1">Capacità Tavolo 1x1:</span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => selectedTable.hasEndSeat && toggleEndSeat(selectedTable.id)}
@@ -627,7 +834,7 @@ export const CapoSalaView: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] text-zinc-400">
-                Tavoli adiacenti rilevati: {tavolataMembers.map(t => `#${t.number}`).join(', ')}. Allontana il tavolo per separarlo automaticamente.
+                Tavoli adiacenti uniti: {tavolataMembers.map(t => `#${t.number}`).join(', ')}. Allontanando il tavolo si scioglierà automaticamente.
               </p>
             </div>
           )}
@@ -695,58 +902,116 @@ export const CapoSalaView: React.FC = () => {
               )}
             </div>
           )}
+
+          {/* ELIMINA TAVOLO IN MODALITÀ MODIFICA DEFAULT */}
+          {isEditingDefaultLayout && (
+            <div className="pt-2 border-t border-zinc-800">
+              <button
+                onClick={() => handleDeleteSelectedTable(selectedTable.id)}
+                className="w-full py-2 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-bold text-xs rounded-xl border border-rose-500/30 flex items-center justify-center space-x-1.5 transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Elimina Tavolo #{selectedTable.number}</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Modal Nuova Zona */}
-      {showNewZoneModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleCreateZone} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl">
+      {/* MODALE SALVATAGGIO ZONA TRACCIATA COL DITO/MOUSE */}
+      {showSaveZoneModal && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <form onSubmit={handleSaveDrawnZone} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-              <h3 className="font-bold text-white text-sm">Nuova Zona nel Locale</h3>
-              <button type="button" onClick={() => setShowNewZoneModal(false)} className="text-zinc-400 hover:text-white">✕</button>
+              <h3 className="font-bold text-white text-sm">Salva Zona Tracciata</h3>
+              <button type="button" onClick={() => setShowSaveZoneModal(false)} className="text-zinc-400 hover:text-white">✕</button>
             </div>
+
+            <div className="text-xs text-zinc-400 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 font-mono">
+              Dimensioni: {newZoneData.width.toFixed(1)}m x {newZoneData.height.toFixed(1)}m
+              <br />
+              Coordinate: ({newZoneData.x.toFixed(1)}m, {newZoneData.y.toFixed(1)}m)
+            </div>
+
             <div>
               <label className="text-xs text-zinc-400 block mb-1">Nome Zona:</label>
               <input
                 type="text"
                 required
-                placeholder="Es. Dehor, Sala Interna, Terrazza"
+                placeholder="Es. Dehor Esterno, Sala Forno, Veranda"
                 value={newZoneName}
                 onChange={(e) => setNewZoneName(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white"
+                autoFocus
               />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[11px] text-zinc-400 block mb-1">Largh. (metri):</label>
-                <input
-                  type="number"
-                  step="0.5"
-                  min="1"
-                  max={floorWidth}
-                  value={newZoneWidth}
-                  onChange={(e) => setNewZoneWidth(Number(e.target.value))}
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] text-zinc-400 block mb-1">Altezza (metri):</label>
-                <input
-                  type="number"
-                  step="0.5"
-                  min="1"
-                  max={floorHeight}
-                  value={newZoneHeight}
-                  onChange={(e) => setNewZoneHeight(Number(e.target.value))}
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
-                />
+
+            <div>
+              <label className="text-xs text-zinc-400 block mb-1">Colore Tema:</label>
+              <div className="flex space-x-2">
+                {['#f97316', '#38bdf8', '#10b981', '#a855f7', '#f43f5e', '#eab308'].map(c => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setNewZoneColor(c)}
+                    style={{ backgroundColor: c }}
+                    className={`w-7 h-7 rounded-full border-2 transition-transform ${
+                      newZoneColor === c ? 'border-white scale-110 shadow-md' : 'border-transparent'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
-            <button type="submit" className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl">
-              Crea Zona
+
+            <button type="submit" className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-lg">
+              Conferma e Crea Zona
             </button>
           </form>
+        </div>
+      )}
+
+      {/* MODALE GESTIONE ED ELIMINAZIONE ZONE */}
+      {showZoneManagerModal && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+              <h3 className="font-bold text-white text-sm">Gestione Zone ({zones.length})</h3>
+              <button type="button" onClick={() => setShowZoneManagerModal(false)} className="text-zinc-400 hover:text-white">✕</button>
+            </div>
+
+            {zones.length === 0 ? (
+              <p className="text-xs text-zinc-500 py-4 text-center">Nessuna zona creata. Usa "Traccia Zona" per disegnarne una col dito o mouse.</p>
+            ) : (
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {zones.map(z => (
+                  <div key={z.id} className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-bold text-white block" style={{ color: z.colorTheme }}>{z.name}</span>
+                      <span className="text-[11px] text-zinc-500 font-mono">{z.widthMeters}m x {z.heightMeters}m</span>
+                    </div>
+                    <button
+                      onClick={() => deleteZone(z.id)}
+                      className="p-1.5 rounded-lg bg-zinc-900 hover:bg-rose-500/20 text-zinc-400 hover:text-rose-400"
+                      title="Elimina"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => {
+                setShowZoneManagerModal(false);
+                setIsDrawingZoneMode(true);
+              }}
+              className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
+            >
+              <PenTool className="w-3.5 h-3.5" />
+              <span>Traccia Nuova Zona</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -118,8 +118,18 @@ export function setupSocketHandlers(io: Server) {
       io.emit('TABLE_UPDATED', store.tables);
     });
 
+    socket.on('tables:updateAll', (updatedTables: RestaurantTable[]) => {
+      store.tables = updatedTables;
+      io.emit('TABLE_UPDATED', store.tables);
+    });
+
     socket.on('zone:create', (zone: RestaurantZone) => {
       store.zones.push(zone);
+      io.emit('ZONE_UPDATED', store.zones);
+    });
+
+    socket.on('zone:delete', (zoneId: string) => {
+      store.zones = store.zones.filter(z => z.id !== zoneId);
       io.emit('ZONE_UPDATED', store.zones);
     });
 

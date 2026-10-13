@@ -56,6 +56,8 @@ interface AppContextType {
   payOrder: (orderId: string, method: 'CONTANTI' | 'CARTA' | 'DIVISO') => void;
   updateTable: (table: RestaurantTable) => void;
   createZone: (zone: RestaurantZone) => void;
+  deleteZone: (zoneId: string) => void;
+  updateAllTables: (tables: RestaurantTable[]) => void;
   createReservation: (reservation: Reservation) => void;
   updateIngredient: (ingredient: Ingredient) => void;
   deleteIngredient: (ingredientId: string) => void;
@@ -291,6 +293,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const createZone = (zone: RestaurantZone) => {
     socket?.emit('zone:create', zone);
+    setZones(prev => [...prev, zone]);
+    addToast('Zona Creata', `Zona "${zone.name}" tracciata sulla planimetria.`, 'success');
+  };
+
+  const deleteZone = (zoneId: string) => {
+    socket?.emit('zone:delete', zoneId);
+    setZones(prev => prev.filter(z => z.id !== zoneId));
+    addToast('Zona Eliminata', 'Zona rimossa dalla planimetria.', 'info');
+  };
+
+  const updateAllTables = (updatedTables: RestaurantTable[]) => {
+    socket?.emit('tables:updateAll', updatedTables);
+    setTables(updatedTables);
   };
 
   const createReservation = (reservation: Reservation) => {
@@ -400,6 +415,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         payOrder,
         updateTable,
         createZone,
+        deleteZone,
+        updateAllTables,
         createReservation,
         updateIngredient,
         deleteIngredient,
