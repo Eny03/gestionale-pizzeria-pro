@@ -167,11 +167,18 @@ export interface Order {
 // 3. CAPO SALA: GRIGLIA 1M X 1M, ZONE, TAVOLI E PRENOTAZIONI
 // ----------------------------------------------------------------------------
 
+export interface RestaurantFloorPlan {
+  totalWidthMeters: number; // Es. 20m (grande quadrato)
+  totalHeightMeters: number; // Es. 20m
+}
+
 export interface RestaurantZone {
   id: string;
-  name: string; // Es. "Sala Principale", "Veranda", "Terrazza"
-  widthMeters: number; // Larghezza in metri (griglia)
-  heightMeters: number; // Altezza in metri (griglia)
+  name: string; // Es. "Sala Principale", "Veranda", "Zona Bar/Forno"
+  x: number; // Posizione X nella planimetria globale (metri)
+  y: number; // Posizione Y nella planimetria globale (metri)
+  widthMeters: number; // Larghezza in metri
+  heightMeters: number; // Altezza in metri
   colorTheme: string;
 }
 
@@ -181,13 +188,16 @@ export type TableStatus = 'LIBERO' | 'OCCUPATO' | 'PRENOTATO';
 export interface RestaurantTable {
   id: string;
   number: number;
-  zoneId: string;
+  zoneId?: string;
   x: number; // Coordinata X in metri (griglia 1m x 1m)
   y: number; // Coordinata Y in metri (griglia 1m x 1m)
-  widthMeters: number; // Es: 1.2m
-  heightMeters: number; // Es: 0.8m
+  widthMeters: number; // 1.0m di default
+  heightMeters: number; // 1.0m di default
   shape: TableShape;
-  seats: number;
+  seats: number; // 2 di base, 3 con capotavola
+  hasEndSeat?: boolean; // Posto extra agli estremi (3 persone)
+  tavolataGroupId?: string; // ID se fa parte di una tavolata accorpata
+  tavolataName?: string; // Nome della tavolata (es. "Tavolata T1+T2")
   status: TableStatus;
   activeOrderId?: string;
   activeReservationId?: string;

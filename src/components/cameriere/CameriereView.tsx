@@ -212,7 +212,7 @@ export const CameriereView: React.FC = () => {
               >
                 {tables.map(t => (
                   <option key={t.id} value={t.id} className="bg-slate-900 text-white">
-                    Tavolo #{t.number} ({t.seats} posti) - {t.status}
+                    Tavolo #{t.number} {t.tavolataName ? `[${t.tavolataName}]` : ''} ({t.seats} posti) - {t.status}
                   </option>
                 ))}
               </select>

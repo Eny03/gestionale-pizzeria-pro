@@ -63,6 +63,9 @@ interface AppContextType {
   updateRequirements: (reqs: DayStaffRequirement[]) => void;
   generateShifts: () => void;
   overrideShift: (assignment: ShiftAssignment) => void;
+  mergeTables: (tableIds: string[]) => void;
+  splitTavolata: (tavolataGroupId: string) => void;
+  toggleEndSeat: (tableId: string) => void;
   saveMenuItem: (item: MenuItem) => void;
   deleteMenuItem: (itemId: string) => void;
 }
@@ -315,6 +318,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     socket?.emit('menu:saveItem', item);
   };
 
+  const toggleEndSeat = (tableId: string) => {
+    const table = tables.find(t => t.id === tableId);
+    if (!table) return;
+    const newHasEnd = !table.hasEndSeat;
+    const newSeats = newHasEnd ? 3 : 2;
+    const updated = { ...table, hasEndSeat: newHasEnd, seats: newSeats };
+    updateTable(updated);
+  };
+
+  const mergeTables = (tableIds: string[]) => {
+    const selected = tables.filter(t => tableIds.includes(t.id));
+    if (selected.length < 2) return;
+    const groupId = `tav-${Date.now()}`;
+    const name = `Tavolata ${selected.map(t => 'T' + t.number).join('+')}`;
+    selected.forEach(t => {
+      updateTable({
+        ...t,
+        tavolataGroupId: groupId,
+        tavolataName: name
+      });
+    });
+    addToast('Tavolata Creata', `${name} creata con successo!`, 'success');
+  };
+
+  const splitTavolata = (groupId: string) => {
+    const grouped = tables.filter(t => t.tavolataGroupId === groupId);
+    grouped.forEach(t => {
+      updateTable({
+        ...t,
+        tavolataGroupId: undefined,
+        tavolataName: undefined
+      });
+    });
+    addToast('Tavolata Sciolta', 'I tavoli sono stati separati.', 'info');
+  };
+
   const deleteMenuItem = (itemId: string) => {
     socket?.emit('menu:deleteItem', itemId);
   };
@@ -354,6 +393,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateRequirements,
         generateShifts,
         overrideShift,
+        mergeTables,
+        splitTavolata,
+        toggleEndSeat,
         saveMenuItem,
         deleteMenuItem
       }}

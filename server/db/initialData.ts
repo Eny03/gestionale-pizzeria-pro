@@ -459,56 +459,85 @@ export const initialZones: RestaurantZone[] = [
   {
     id: 'z-1',
     name: 'Sala Interna Vesuvio',
+    x: 1,
+    y: 1,
     widthMeters: 10,
-    heightMeters: 8,
+    heightMeters: 9,
     colorTheme: '#ea580c'
   },
   {
     id: 'z-2',
     name: 'Veranda Panoramica',
-    widthMeters: 8,
-    heightMeters: 6,
+    x: 1,
+    y: 11,
+    widthMeters: 10,
+    heightMeters: 7,
     colorTheme: '#0284c7'
+  },
+  {
+    id: 'z-3',
+    name: 'Zona Forno & Pizzeria',
+    x: 12,
+    y: 1,
+    widthMeters: 6,
+    heightMeters: 8,
+    colorTheme: '#ef4444'
+  },
+  {
+    id: 'z-4',
+    name: 'Banco Bar & Cassa',
+    x: 12,
+    y: 10,
+    widthMeters: 6,
+    heightMeters: 8,
+    colorTheme: '#8b5cf6'
   }
 ];
 
 export const initialTables: RestaurantTable[] = [
-  // Sala Interna
+  // Tavolo singolo 1m x 1m (2 posti base)
   {
     id: 't-1',
     number: 1,
     zoneId: 'z-1',
-    x: 1.5,
-    y: 1.5,
-    widthMeters: 1.2,
-    heightMeters: 0.8,
-    shape: 'RECTANGLE',
-    seats: 4,
+    x: 2.0,
+    y: 2.0,
+    widthMeters: 1.0,
+    heightMeters: 1.0,
+    shape: 'SQUARE',
+    seats: 2,
+    hasEndSeat: false,
     status: 'OCCUPATO',
     activeOrderId: 'ord-101'
   },
+  // Tavolo singolo 1m x 1m (con 3° posto agli estremi)
   {
     id: 't-2',
     number: 2,
     zoneId: 'z-1',
     x: 4.0,
-    y: 1.5,
-    widthMeters: 1.2,
-    heightMeters: 0.8,
-    shape: 'RECTANGLE',
-    seats: 4,
+    y: 2.0,
+    widthMeters: 1.0,
+    heightMeters: 1.0,
+    shape: 'SQUARE',
+    seats: 3,
+    hasEndSeat: true,
     status: 'LIBERO'
   },
+  // TAVOLATA ACCORPATA: T3 e T4 affiancati! (1m + 1m = 4-6 persone)
   {
     id: 't-3',
     number: 3,
     zoneId: 'z-1',
-    x: 6.5,
-    y: 1.5,
-    widthMeters: 1.5,
+    x: 6.0,
+    y: 4.0,
+    widthMeters: 1.0,
     heightMeters: 1.0,
-    shape: 'RECTANGLE',
-    seats: 6,
+    shape: 'SQUARE',
+    seats: 2,
+    hasEndSeat: true,
+    tavolataGroupId: 'tav-3-4',
+    tavolataName: 'Tavolata T3+T4',
     status: 'PRENOTATO',
     activeReservationId: 'res-301'
   },
@@ -516,50 +545,42 @@ export const initialTables: RestaurantTable[] = [
     id: 't-4',
     number: 4,
     zoneId: 'z-1',
-    x: 2.0,
-    y: 4.5,
+    x: 7.0, // Affiancato a T3
+    y: 4.0,
     widthMeters: 1.0,
     heightMeters: 1.0,
     shape: 'SQUARE',
     seats: 2,
-    status: 'OCCUPATO',
-    activeOrderId: 'ord-102'
+    hasEndSeat: true,
+    tavolataGroupId: 'tav-3-4',
+    tavolataName: 'Tavolata T3+T4',
+    status: 'PRENOTATO'
   },
-  {
-    id: 't-5',
-    number: 5,
-    zoneId: 'z-1',
-    x: 5.0,
-    y: 4.5,
-    widthMeters: 1.2,
-    heightMeters: 1.2,
-    shape: 'ROUND',
-    seats: 4,
-    status: 'LIBERO'
-  },
-  // Veranda
+  // Tavoli in Veranda
   {
     id: 't-10',
     number: 10,
     zoneId: 'z-2',
-    x: 1.5,
-    y: 1.5,
-    widthMeters: 1.2,
-    heightMeters: 0.8,
-    shape: 'RECTANGLE',
-    seats: 4,
+    x: 2.0,
+    y: 13.0,
+    widthMeters: 1.0,
+    heightMeters: 1.0,
+    shape: 'SQUARE',
+    seats: 2,
+    hasEndSeat: false,
     status: 'LIBERO'
   },
   {
     id: 't-11',
     number: 11,
     zoneId: 'z-2',
-    x: 4.5,
-    y: 1.5,
-    widthMeters: 1.5,
-    heightMeters: 0.9,
-    shape: 'RECTANGLE',
-    seats: 6,
+    x: 4.0,
+    y: 13.0,
+    widthMeters: 1.0,
+    heightMeters: 1.0,
+    shape: 'SQUARE',
+    seats: 3,
+    hasEndSeat: true,
     status: 'LIBERO'
   }
 ];
