@@ -47,6 +47,9 @@ export const Navbar: React.FC = () => {
                 <span className="font-extrabold text-sm sm:text-base tracking-tight text-white">
                   Pizzeria Pro
                 </span>
+                <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                  v2.0
+                </span>
                 <span
                   className={`w-2 h-2 rounded-full ${
                     isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'

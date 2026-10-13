@@ -18,13 +18,17 @@ if %ERRORLEVEL% neq 0 (
     exit /b
 )
 
+echo [*] Compilazione automatica interfaccia all'ultima versione...
+call npm run build
+
+echo.
 echo [*] Avvio Server Gestionale sulla porta 3001...
 echo.
 echo ======================================================================
 echo  1. DA QUESTO COMPUTER (PC):
 echo     👉 http://localhost:3001
 echo.
-echo  2. DA SMARTPHONE / TABLET SENZA WI-FI (Ovunque nel mondo con Tailscale):
+echo  2. DA SMARTPHONE / TABLET SENZA WI-FI (Ovunque con Tailscale):
 echo     👉 http://100.91.190.109:3001
 echo.
 echo  3. DA SMARTPHONE / TABLET SOTTO STESSO WI-FI:
