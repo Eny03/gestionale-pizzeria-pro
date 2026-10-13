@@ -32,8 +32,9 @@ export const CapoSalaView: React.FC = () => {
     setSelectedDate
   } = useApp();
 
-  // Floor dimensions: 18m x 18m square
-  const TOTAL_FLOOR_METERS = 18;
+  // Dimensioni locale: 500 m² (Quadrato da 22.5m x 22.5m ≈ 506 m², o 20m x 25m)
+  const [floorWidth, setFloorWidth] = useState<number>(22.5);
+  const [floorHeight, setFloorHeight] = useState<number>(22.5);
   const GRID_STEP = 0.5; // Risoluzione griglia 0.5m x 0.5m
 
   // Selected table
@@ -47,15 +48,16 @@ export const CapoSalaView: React.FC = () => {
 
   const activeReservation = dayReservations.find(r => r.tableId === selectedTable?.id);
 
-  // Auto-fit zoom calculation
+  // Auto-fit zoom calculation per 500 m²
   const calculateFitZoom = () => {
-    if (typeof window === 'undefined') return 24;
+    if (typeof window === 'undefined') return 18;
     const paddingX = window.innerWidth < 768 ? 20 : 48;
     const paddingY = window.innerWidth < 768 ? 170 : 130;
     const availWidth = window.innerWidth - paddingX;
     const availHeight = window.innerHeight - paddingY;
+    const maxDim = Math.max(floorWidth, floorHeight);
     const targetPx = Math.min(availWidth, availHeight);
-    return Math.max(16, Math.min(48, Math.floor(targetPx / TOTAL_FLOOR_METERS)));
+    return Math.max(12, Math.min(42, Math.floor(targetPx / maxDim)));
   };
 
   const [zoomLevel, setZoomLevel] = useState<number>(calculateFitZoom);
@@ -187,8 +189,8 @@ export const CapoSalaView: React.FC = () => {
     const snappedX = Math.round(rawX / GRID_STEP) * GRID_STEP;
     const snappedY = Math.round(rawY / GRID_STEP) * GRID_STEP;
 
-    const clampedX = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1.0, snappedX));
-    const clampedY = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1.0, snappedY));
+    const clampedX = Math.max(0, Math.min(floorWidth - 1.0, snappedX));
+    const clampedY = Math.max(0, Math.min(floorHeight - 1.0, snappedY));
 
     const currentTable = tables.find(t => t.id === draggingTableId);
     if (currentTable && (currentTable.x !== clampedX || currentTable.y !== clampedY)) {
@@ -339,13 +341,16 @@ export const CapoSalaView: React.FC = () => {
                 {dayReservations.length} prenotati
               </span>
             )}
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-lg bg-zinc-800 text-orange-400 font-bold border border-zinc-700/80 hidden sm:inline">
+              📐 500 m² ({floorWidth}m x {floorHeight}m)
+            </span>
           </div>
 
           {/* Zoom Controls & Aggiungi Tavolo */}
           <div className="flex items-center space-x-1.5">
             <div className="flex items-center bg-zinc-800 rounded-lg p-0.5 border border-zinc-700/60">
               <button
-                onClick={() => setZoomLevel(Math.max(16, zoomLevel - 3))}
+                onClick={() => setZoomLevel(Math.max(12, zoomLevel - 3))}
                 className="p-1.5 text-zinc-400 hover:text-white"
                 title="Riduci"
               >
@@ -360,7 +365,7 @@ export const CapoSalaView: React.FC = () => {
                 <span className="hidden sm:inline">Fit</span>
               </button>
               <button
-                onClick={() => setZoomLevel(Math.min(50, zoomLevel + 3))}
+                onClick={() => setZoomLevel(Math.min(45, zoomLevel + 3))}
                 className="p-1.5 text-zinc-400 hover:text-white"
                 title="Ingrandisci"
               >
@@ -386,7 +391,7 @@ export const CapoSalaView: React.FC = () => {
           </div>
         </div>
 
-        {/* Canvas Planimetria (18m x 18m con Risoluzione Griglia 0.5m x 0.5m) */}
+        {/* Canvas Planimetria 500 m² (con Risoluzione Griglia 0.5m x 0.5m) */}
         <div
           className="flex-1 overflow-auto p-2 sm:p-4 bg-zinc-950 flex items-center justify-center relative touch-none"
           onMouseMove={(e) => handleMoveDrag(e.clientX, e.clientY)}
@@ -398,8 +403,8 @@ export const CapoSalaView: React.FC = () => {
           <div
             ref={gridContainerRef}
             style={{
-              width: `${TOTAL_FLOOR_METERS * zoomLevel}px`,
-              height: `${TOTAL_FLOOR_METERS * zoomLevel}px`,
+              width: `${floorWidth * zoomLevel}px`,
+              height: `${floorHeight * zoomLevel}px`,
               backgroundSize: `${zoomLevel * GRID_STEP}px ${zoomLevel * GRID_STEP}px`,
               backgroundImage: `
                 linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
@@ -409,12 +414,23 @@ export const CapoSalaView: React.FC = () => {
             className="relative bg-zinc-900/90 rounded-2xl border border-zinc-700/80 shadow-2xl overflow-hidden select-none"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Righello Metro Principale */}
-            {Array.from({ length: TOTAL_FLOOR_METERS }).map((_, i) => (
+            {/* Righello Orizzontale Metro (X) */}
+            {Array.from({ length: Math.ceil(floorWidth) }).map((_, i) => (
               <span
-                key={`meter-${i}`}
+                key={`meter-x-${i}`}
                 style={{ left: `${i * zoomLevel + 2}px` }}
                 className="absolute top-0.5 text-[8px] font-mono text-zinc-600 pointer-events-none select-none"
+              >
+                {i}m
+              </span>
+            ))}
+
+            {/* Righello Verticale Metro (Y) */}
+            {Array.from({ length: Math.ceil(floorHeight) }).map((_, i) => (
+              <span
+                key={`meter-y-${i}`}
+                style={{ top: `${i * zoomLevel + 2}px` }}
+                className="absolute left-0.5 text-[8px] font-mono text-zinc-600 pointer-events-none select-none"
               >
                 {i}m
               </span>
@@ -708,7 +724,7 @@ export const CapoSalaView: React.FC = () => {
                   type="number"
                   step="0.5"
                   min="1"
-                  max="18"
+                  max={floorWidth}
                   value={newZoneWidth}
                   onChange={(e) => setNewZoneWidth(Number(e.target.value))}
                   className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
@@ -720,7 +736,7 @@ export const CapoSalaView: React.FC = () => {
                   type="number"
                   step="0.5"
                   min="1"
-                  max="18"
+                  max={floorHeight}
                   value={newZoneHeight}
                   onChange={(e) => setNewZoneHeight(Number(e.target.value))}
                   className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
