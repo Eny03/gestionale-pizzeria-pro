@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ChefHat, Package, Clock, CheckCircle2, Plus } from 'lucide-react';
+import { ChefHat, Package, Clock, CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import { Ingredient, KitchenItemPhase } from '../../../shared/types';
 
 export const CucinaView: React.FC = () => {
-  const { orders, ingredients, updateItemPhase, updateIngredient } = useApp();
+  const { orders, ingredients, updateItemPhase, updateIngredient, deleteIngredient } = useApp();
 
   const [activeTab, setActiveTab] = useState<'COMANDE' | 'MAGAZZINO'>('COMANDE');
   const [searchQuery, setSearchQuery] = useState('');
@@ -212,6 +212,17 @@ export const CucinaView: React.FC = () => {
                           className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold rounded-lg border border-zinc-700"
                         >
                           + Rifornisci
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Rimuovere l'ingrediente "${ing.name}"?`)) {
+                              deleteIngredient(ing.id);
+                            }
+                          }}
+                          className="p-1 rounded-lg bg-zinc-800 hover:bg-rose-500/20 text-zinc-400 hover:text-rose-400"
+                          title="Elimina"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>

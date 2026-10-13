@@ -18,7 +18,10 @@ import {
   Search,
   X,
   ChevronRight,
-  ShoppingBag
+  ShoppingBag,
+  Flame,
+  Sparkles,
+  HelpCircle
 } from 'lucide-react';
 
 export const CameriereView: React.FC = () => {
@@ -32,7 +35,6 @@ export const CameriereView: React.FC = () => {
     setActiveTableId
   } = useApp();
 
-  // Selected table ID defaults to activeTableId or first table
   const [selectedTableId, setSelectedTableId] = useState<string>(
     activeTableId || tables[0]?.id || 't-1'
   );
@@ -48,19 +50,19 @@ export const CameriereView: React.FC = () => {
   const [guestsCount, setGuestsCount] = useState<number>(2);
   const [cartItems, setCartItems] = useState<OrderItem[]>([]);
   const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
+  const [customizingTab, setCustomizingTab] = useState<'PRE_BAKE' | 'POST_BAKE' | 'CLARIFICATION'>('PRE_BAKE');
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Customization modal state
+  // Customization state
   const [addedIngredients, setAddedIngredients] = useState<IngredientDelta[]>([]);
   const [removedIngredients, setRemovedIngredients] = useState<{ ingredientId: string; name: string }[]>([]);
   const [notes, setNotes] = useState('');
 
-  // Dispatch confirmation notification
+  // Dispatch confirmation
   const [sentOrderCode, setSentOrderCode] = useState<string | null>(null);
 
   const selectedTable = tables.find(t => t.id === selectedTableId) || tables[0];
 
-  // Update table coperti if table changes
   useEffect(() => {
     if (selectedTable) {
       setGuestsCount(selectedTable.seats || 2);
@@ -76,13 +78,13 @@ export const CameriereView: React.FC = () => {
   const openCustomization = (e: React.MouseEvent, item: MenuItem) => {
     e.stopPropagation();
     setCustomizingItem(item);
+    setCustomizingTab('PRE_BAKE');
     setAddedIngredients([]);
     setRemovedIngredients([]);
     setNotes('');
   };
 
   const quickAddItem = (item: MenuItem) => {
-    // If existing standard item in cart, increment quantity
     const existingIndex = cartItems.findIndex(
       ci => ci.menuItemId === item.id &&
       ci.customization.addedIngredients.length === 0 &&
@@ -221,13 +223,26 @@ export const CameriereView: React.FC = () => {
     { key: 'bevande', label: 'Bevande' }
   ];
 
+  // FILTRO ESCLUSIVO PER AGGIUNTE PIZZA: SOLO ingredienti del reparto pizzeria!
+  const isPizzaCustomization = customizingItem?.targetDepartment === 'pizzeria';
+  const relevantIngredients = ingredients.filter(ing => {
+    if (isPizzaCustomization) {
+      return ing.stationTarget === 'pizzeria';
+    }
+    return ing.stationTarget === customizingItem?.targetDepartment;
+  });
+
+  const preBakeAdditions = relevantIngredients.filter(i => i.isPreBake && !i.requiresClarification);
+  const postBakeAdditions = relevantIngredients.filter(i => !i.isPreBake && !i.requiresClarification);
+  const clarificationOptions = relevantIngredients.filter(i => i.requiresClarification);
+
   return (
     <div className="h-full flex flex-col lg:flex-row bg-zinc-950 text-zinc-100 overflow-hidden relative">
       {/* Toast Conferma Invio */}
       {sentOrderCode && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-black animate-bounce">
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-white px-4 py-2 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-black animate-bounce">
           <CheckCircle className="w-4 h-4" />
-          <span>Comanda {sentOrderCode} inviata con successo al KDS!</span>
+          <span>Comanda {sentOrderCode} inviata al KDS!</span>
         </div>
       )}
 
@@ -334,7 +349,7 @@ export const CameriereView: React.FC = () => {
                   <button
                     onClick={(e) => openCustomization(e, item)}
                     className="p-1 rounded-lg text-zinc-400 hover:text-amber-400 hover:bg-zinc-800"
-                    title="Modifica ingredienti"
+                    title="Modifiche Ingredienti"
                   >
                     <Sliders className="w-3.5 h-3.5" />
                   </button>
@@ -376,27 +391,20 @@ export const CameriereView: React.FC = () => {
           isCartOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'
         }`}
       >
-        {/* Header Carrello */}
         <div className="p-3.5 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/50">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-sm text-white">
-                Tavolo #{selectedTable?.number}
-              </span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-mono">
-                {guestsCount} coperti
-              </span>
-            </div>
+          <div className="flex items-center space-x-2">
+            <span className="font-extrabold text-sm text-white">
+              Tavolo #{selectedTable?.number}
+            </span>
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-mono">
+              {guestsCount} coperti
+            </span>
           </div>
-          <button
-            onClick={() => setIsCartOpen(false)}
-            className="lg:hidden p-1 text-zinc-400 hover:text-white"
-          >
+          <button onClick={() => setIsCartOpen(false)} className="lg:hidden p-1 text-zinc-400 hover:text-white">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Lista Articoli Carrello */}
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {cartItems.length === 0 ? (
             <div className="h-48 flex flex-col items-center justify-center text-zinc-500 text-xs">
@@ -437,10 +445,7 @@ export const CameriereView: React.FC = () => {
 
                 {/* Stepper Quantità */}
                 <div className="flex items-center justify-between pt-1 border-t border-zinc-900">
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="p-1 text-zinc-500 hover:text-rose-400"
-                  >
+                  <button onClick={() => removeItem(item.id)} className="p-1 text-zinc-500 hover:text-rose-400">
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
 
@@ -489,72 +494,241 @@ export const CameriereView: React.FC = () => {
         </div>
       </div>
 
-      {/* MODALE PERSONALIZZAZIONE PIATTO */}
+      {/* MODALE PERSONALIZZAZIONE PIZZA / PIATTO CON CATEGORIE SPECIALIZZATE */}
       {customizingItem && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-4 space-y-3.5 shadow-2xl">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-4 sm:p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
               <div>
-                <h3 className="font-bold text-white text-sm">{customizingItem.name}</h3>
-                <span className="text-xs text-emerald-400 font-mono">€ {customizingItem.price.toFixed(2)}</span>
+                <h3 className="font-extrabold text-sm sm:text-base text-white">{customizingItem.name}</h3>
+                <span className="text-xs text-emerald-400 font-mono font-bold">Base: € {customizingItem.price.toFixed(2)}</span>
               </div>
               <button onClick={() => setCustomizingItem(null)} className="text-zinc-400 hover:text-white">✕</button>
             </div>
 
-            {/* Aggiunte Ingredienti */}
-            <div>
-              <span className="text-[11px] font-bold text-zinc-400 block mb-1">Aggiungi Ingredienti:</span>
-              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
-                {ingredients.slice(0, 8).map(ing => {
-                  const isAdded = addedIngredients.some(a => a.ingredientId === ing.id);
-                  return (
-                    <button
-                      key={ing.id}
-                      type="button"
-                      onClick={() => {
-                        if (isAdded) {
-                          setAddedIngredients(prev => prev.filter(a => a.ingredientId !== ing.id));
-                        } else {
-                          setAddedIngredients(prev => [...prev, {
-                            ingredientId: ing.id,
-                            name: ing.name,
-                            quantity: 1,
-                            unit: ing.unit,
-                            priceDelta: ing.extraPrice
-                          }]);
-                        }
-                      }}
-                      className={`px-2 py-1 rounded-lg text-xs font-semibold border transition-all ${
-                        isAdded
-                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50'
-                          : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700'
-                      }`}
-                    >
-                      {isAdded ? '✓' : '+'} {ing.name} (+€{ing.extraPrice.toFixed(2)})
-                    </button>
-                  );
-                })}
+            {/* SELEZIONE CATEGORIE MODIFICHE PIZZA (SOLO INGREDIENTI PIZZERIA) */}
+            {isPizzaCustomization ? (
+              <div className="flex space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setCustomizingTab('PRE_BAKE')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold flex items-center justify-center space-x-1 transition-all ${
+                    customizingTab === 'PRE_BAKE' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>In Cottura ({preBakeAdditions.length})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCustomizingTab('POST_BAKE')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold flex items-center justify-center space-x-1 transition-all ${
+                    customizingTab === 'POST_BAKE' ? 'bg-sky-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Dopo Cottura ({postBakeAdditions.length})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCustomizingTab('CLARIFICATION')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold flex items-center justify-center space-x-1 transition-all ${
+                    customizingTab === 'CLARIFICATION' ? 'bg-amber-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                  <span>Da Chiedere ({clarificationOptions.length})</span>
+                </button>
+              </div>
+            ) : null}
+
+            {/* GRIGLIA INGREDIENTI SELEZIONABILI */}
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {/* Tab 1: In Cottura */}
+              {(!isPizzaCustomization || customizingTab === 'PRE_BAKE') && (
+                <div>
+                  <span className="text-[11px] font-bold text-orange-400 block mb-1 uppercase">
+                    Ingredienti da Infornare (In Cottura):
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {preBakeAdditions.map(ing => {
+                      const isAdded = addedIngredients.some(a => a.ingredientId === ing.id);
+                      return (
+                        <button
+                          key={ing.id}
+                          type="button"
+                          onClick={() => {
+                            if (isAdded) {
+                              setAddedIngredients(prev => prev.filter(a => a.ingredientId !== ing.id));
+                            } else {
+                              setAddedIngredients(prev => [...prev, {
+                                ingredientId: ing.id,
+                                name: ing.name,
+                                priceDelta: ing.extraPrice
+                              }]);
+                            }
+                          }}
+                          className={`p-2 rounded-xl text-xs font-semibold border text-left transition-all flex items-center justify-between ${
+                            isAdded
+                              ? 'bg-orange-500/20 text-orange-300 border-orange-500'
+                              : 'bg-zinc-950 text-zinc-300 border-zinc-800 hover:border-zinc-700'
+                          }`}
+                        >
+                          <span className="truncate">{ing.name}</span>
+                          <span className="font-mono text-emerald-400 ml-1 shrink-0 font-bold">
+                            {isAdded ? '✓' : `+€${ing.extraPrice.toFixed(2)}`}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: Dopo Cottura */}
+              {isPizzaCustomization && customizingTab === 'POST_BAKE' && (
+                <div>
+                  <span className="text-[11px] font-bold text-sky-400 block mb-1 uppercase">
+                    Ingredienti a Freddo (Dopo Cottura / Uscita Forno):
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {postBakeAdditions.map(ing => {
+                      const isAdded = addedIngredients.some(a => a.ingredientId === ing.id);
+                      return (
+                        <button
+                          key={ing.id}
+                          type="button"
+                          onClick={() => {
+                            if (isAdded) {
+                              setAddedIngredients(prev => prev.filter(a => a.ingredientId !== ing.id));
+                            } else {
+                              setAddedIngredients(prev => [...prev, {
+                                ingredientId: ing.id,
+                                name: ing.name,
+                                priceDelta: ing.extraPrice
+                              }]);
+                            }
+                          }}
+                          className={`p-2 rounded-xl text-xs font-semibold border text-left transition-all flex items-center justify-between ${
+                            isAdded
+                              ? 'bg-sky-500/20 text-sky-300 border-sky-500'
+                              : 'bg-zinc-950 text-zinc-300 border-zinc-800 hover:border-zinc-700'
+                          }`}
+                        >
+                          <span className="truncate">{ing.name}</span>
+                          <span className="font-mono text-emerald-400 ml-1 shrink-0 font-bold">
+                            {isAdded ? '✓' : `+€${ing.extraPrice.toFixed(2)}`}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3: Da Chiedere */}
+              {isPizzaCustomization && customizingTab === 'CLARIFICATION' && (
+                <div>
+                  <span className="text-[11px] font-bold text-amber-400 block mb-1 uppercase">
+                    Varianti Cottura & Opzioni da Chiedere:
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {clarificationOptions.map(ing => {
+                      const isAdded = addedIngredients.some(a => a.ingredientId === ing.id);
+                      return (
+                        <button
+                          key={ing.id}
+                          type="button"
+                          onClick={() => {
+                            if (isAdded) {
+                              setAddedIngredients(prev => prev.filter(a => a.ingredientId !== ing.id));
+                            } else {
+                              setAddedIngredients(prev => [...prev, {
+                                ingredientId: ing.id,
+                                name: ing.name,
+                                priceDelta: ing.extraPrice
+                              }]);
+                            }
+                          }}
+                          className={`p-2 rounded-xl text-xs font-semibold border text-left transition-all flex items-center justify-between ${
+                            isAdded
+                              ? 'bg-amber-500/20 text-amber-300 border-amber-500'
+                              : 'bg-zinc-950 text-zinc-300 border-zinc-800 hover:border-zinc-700'
+                          }`}
+                        >
+                          <span className="truncate">{ing.name}</span>
+                          <span className="font-mono text-emerald-400 ml-1 shrink-0 font-bold">
+                            {isAdded ? '✓' : ing.extraPrice > 0 ? `+€${ing.extraPrice.toFixed(2)}` : 'Gratis'}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* RIMOZIONE INGREDIENTI BASE DELLA RICETTA */}
+              {customizingItem.recipe && customizingItem.recipe.length > 0 && (
+                <div className="pt-2 border-t border-zinc-800">
+                  <span className="text-[11px] font-bold text-rose-400 block mb-1 uppercase">
+                    Rimuovi Ingredienti Base (Senza...):
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {customizingItem.recipe.map(r => {
+                      const isRemoved = removedIngredients.some(rm => rm.ingredientId === r.ingredientId);
+                      return (
+                        <button
+                          key={r.ingredientId}
+                          type="button"
+                          onClick={() => {
+                            if (isRemoved) {
+                              setRemovedIngredients(prev => prev.filter(rm => rm.ingredientId !== r.ingredientId));
+                            } else {
+                              setRemovedIngredients(prev => [...prev, { ingredientId: r.ingredientId, name: r.ingredientName }]);
+                            }
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                            isRemoved
+                              ? 'bg-rose-500/20 text-rose-400 border-rose-500 line-through'
+                              : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white'
+                          }`}
+                        >
+                          {isRemoved ? '✕ Senza ' : '- '} {r.ingredientName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Note Libere */}
+              <div className="pt-2 border-t border-zinc-800">
+                <span className="text-[11px] font-bold text-zinc-400 block mb-1">Note Libere:</span>
+                <input
+                  type="text"
+                  placeholder="Es. Ben cotta, servire subito insieme ai fritti..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white"
+                />
               </div>
             </div>
 
-            {/* Note */}
-            <div>
-              <span className="text-[11px] font-bold text-zinc-400 block mb-1">Note Speciali:</span>
-              <input
-                type="text"
-                placeholder="Es. Ben cotta, senza origano..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white"
-              />
+            {/* Pulsante Conferma */}
+            <div className="pt-2 border-t border-zinc-800 flex justify-between items-center shrink-0">
+              <div className="text-xs">
+                <span className="text-zinc-400">Prezzo Modificato: </span>
+                <span className="font-mono font-black text-emerald-400 text-sm">
+                  € {(customizingItem.price + addedIngredients.reduce((s, a) => s + a.priceDelta, 0)).toFixed(2)}
+                </span>
+              </div>
+              <button
+                onClick={confirmCustomization}
+                className="py-2.5 px-4 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-lg"
+              >
+                Conferma e Aggiungi
+              </button>
             </div>
-
-            <button
-              onClick={confirmCustomization}
-              className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl"
-            >
-              Conferma e Aggiungi
-            </button>
           </div>
         </div>
       )}

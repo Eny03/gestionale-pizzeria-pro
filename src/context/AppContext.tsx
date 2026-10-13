@@ -58,6 +58,7 @@ interface AppContextType {
   createZone: (zone: RestaurantZone) => void;
   createReservation: (reservation: Reservation) => void;
   updateIngredient: (ingredient: Ingredient) => void;
+  deleteIngredient: (ingredientId: string) => void;
   updateStationStock: (stockItem: StationStockItem) => void;
   submitAvailability: (avail: StaffAvailability) => void;
   updateRequirements: (reqs: DayStaffRequirement[]) => void;
@@ -70,6 +71,8 @@ interface AppContextType {
   deleteMenuItem: (itemId: string) => void;
   activeTableId: string | null;
   setActiveTableId: (id: string | null) => void;
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -97,6 +100,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [shiftAssignments, setShiftAssignments] = useState<ShiftAssignment[]>([]);
   const [fairnessReport, setFairnessReport] = useState<SchedulingFairnessReport | null>(null);
   const [activeTableId, setActiveTableId] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [notifications, setNotifications] = useState<NotificationToast[]>([]);
 
   const addToast = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
@@ -297,6 +301,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     socket?.emit('inventory:updateIngredient', ingredient);
   };
 
+  const deleteIngredient = (ingredientId: string) => {
+    socket?.emit('inventory:deleteIngredient', ingredientId);
+    setIngredients(prev => prev.filter(i => i.id !== ingredientId));
+    setStationStock(prev => prev.filter(s => s.ingredientId !== ingredientId));
+    addToast('Ingrediente Rimosso', 'Ingrediente eliminato dall\'inventario.', 'info');
+  };
+
   const updateStationStock = (stockItem: StationStockItem) => {
     socket?.emit('stationStock:update', stockItem);
   };
@@ -391,6 +402,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createZone,
         createReservation,
         updateIngredient,
+        deleteIngredient,
         updateStationStock,
         submitAvailability,
         updateRequirements,
@@ -402,7 +414,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveMenuItem,
         deleteMenuItem,
         activeTableId,
-        setActiveTableId
+        setActiveTableId,
+        selectedDate,
+        setSelectedDate
       }}
     >
       {children}

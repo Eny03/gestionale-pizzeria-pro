@@ -48,6 +48,7 @@ export interface Ingredient {
   costPerUnit: number; // Costo fornitore
   expiryDate: string; // YYYY-MM-DD
   lotNumber: string; // Lotto tracciabilità
+  requiresClarification?: boolean; // Opzione da chiedere al cliente (es. ben cotta, senza aglio)
 }
 
 export interface StationStockItem {
@@ -214,6 +215,7 @@ export interface Reservation {
   expectedDurationMinutes: number; // Durata prevista (es. 90 min)
   notes?: string;
   status: 'CONFERMATA' | 'SEDUTI' | 'COMPLETATA' | 'ANNULLATA';
+  date?: string; // YYYY-MM-DD della prenotazione
   createdAt: string;
 }
 

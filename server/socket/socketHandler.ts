@@ -145,6 +145,13 @@ export function setupSocketHandlers(io: Server) {
       io.emit('GLOBAL_INVENTORY_UPDATED', store.ingredients);
     });
 
+    socket.on('inventory:deleteIngredient', (ingredientId: string) => {
+      store.ingredients = store.ingredients.filter(i => i.id !== ingredientId);
+      store.stationStock = store.stationStock.filter(s => s.ingredientId !== ingredientId);
+      io.emit('GLOBAL_INVENTORY_UPDATED', store.ingredients);
+      io.emit('STATION_STOCK_UPDATED', store.stationStock);
+    });
+
     socket.on('stationStock:update', (stockItem: StationStockItem) => {
       const idx = store.stationStock.findIndex(s => s.ingredientId === stockItem.ingredientId);
       if (idx >= 0) {

@@ -1,5 +1,5 @@
 // Service Worker per Pizzeria Smart Pro - Funzionamento 100% Offline e Senza Wi-Fi
-const CACHE_NAME = 'pizzeria-smart-cache-v3';
+const CACHE_NAME = 'pizzeria-smart-cache-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

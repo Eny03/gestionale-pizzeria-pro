@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { CreditCard, DollarSign, Plus, Trash2, Edit2, Split, X, CheckCircle } from 'lucide-react';
-import { MenuItem, Order, MenuCategory } from '../../../shared/types';
+import { CreditCard, DollarSign, Plus, Trash2, Edit2, Split, X, CheckCircle, Package } from 'lucide-react';
+import { MenuItem, Order, MenuCategory, Ingredient, StationTarget, IngredientCategory } from '../../../shared/types';
 
 export const AdminView: React.FC = () => {
   const {
     orders,
     menuItems,
+    ingredients,
     payOrder,
     saveMenuItem,
-    deleteMenuItem
+    deleteMenuItem,
+    updateIngredient,
+    deleteIngredient
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'CASSA' | 'MENU'>('CASSA');
+  const [activeTab, setActiveTab] = useState<'CASSA' | 'MENU' | 'INGREDIENTI'>('CASSA');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [splitGuests, setSplitGuests] = useState(2);
 
-  // Menu Modal
+  // Menu Modal State
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
   const [formName, setFormName] = useState('');
@@ -24,8 +27,21 @@ export const AdminView: React.FC = () => {
   const [formPrice, setFormPrice] = useState(8.50);
   const [formDept, setFormDept] = useState<'pizzeria' | 'cucina' | 'bar'>('pizzeria');
 
+  // Ingredient Modal State
+  const [showIngModal, setShowIngModal] = useState(false);
+  const [editingIng, setEditingIng] = useState<Ingredient | null>(null);
+  const [ingName, setIngName] = useState('');
+  const [ingStation, setIngStation] = useState<StationTarget>('pizzeria');
+  const [ingTiming, setIngTiming] = useState<'PRE_BAKE' | 'POST_BAKE' | 'CLARIFICATION'>('PRE_BAKE');
+  const [ingCategory, setIngCategory] = useState<IngredientCategory>('condimenti');
+  const [ingExtraPrice, setIngExtraPrice] = useState(1.50);
+  const [ingStock, setIngStock] = useState(10);
+  const [ingUnit, setIngUnit] = useState<'kg' | 'g' | 'pz' | 'l'>('kg');
+  const [ingFilterStation, setIngFilterStation] = useState<'ALL' | StationTarget>('ALL');
+
   const unpaidOrders = orders.filter(o => !o.isPaid && o.status !== 'ANNULLATO');
 
+  // Menu handlers
   const handleOpenEditMenu = (item?: MenuItem) => {
     if (item) {
       setEditingMenuItem(item);
@@ -59,11 +75,73 @@ export const AdminView: React.FC = () => {
     setShowMenuModal(false);
   };
 
+  // Ingredient handlers
+  const handleOpenEditIng = (ing?: Ingredient) => {
+    if (ing) {
+      setEditingIng(ing);
+      setIngName(ing.name);
+      setIngStation(ing.stationTarget);
+      if (ing.requiresClarification) {
+        setIngTiming('CLARIFICATION');
+      } else if (ing.isPreBake) {
+        setIngTiming('PRE_BAKE');
+      } else {
+        setIngTiming('POST_BAKE');
+      }
+      setIngCategory(ing.category);
+      setIngExtraPrice(ing.extraPrice);
+      setIngStock(ing.currentStock);
+      setIngUnit(ing.unit as any);
+    } else {
+      setEditingIng(null);
+      setIngName('');
+      setIngStation('pizzeria');
+      setIngTiming('PRE_BAKE');
+      setIngCategory('condimenti');
+      setIngExtraPrice(1.50);
+      setIngStock(10);
+      setIngUnit('kg');
+    }
+    setShowIngModal(true);
+  };
+
+  const handleSaveIngredient = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ingName.trim()) return;
+
+    const isPreBake = ingTiming === 'PRE_BAKE';
+    const requiresClarification = ingTiming === 'CLARIFICATION';
+
+    const saved: Ingredient = {
+      id: editingIng ? editingIng.id : `ing-${Date.now()}`,
+      name: ingName.trim(),
+      stationTarget: ingStation,
+      category: ingCategory,
+      isPreBake,
+      requiresClarification,
+      extraPrice: Number(ingExtraPrice),
+      currentStock: Number(ingStock),
+      unit: ingUnit,
+      minThreshold: 2,
+      costPerUnit: 1.0,
+      expiryDate: '2026-12-31',
+      lotNumber: `LOT-${Date.now().toString().slice(-6)}`
+    };
+
+    updateIngredient(saved);
+    setShowIngModal(false);
+  };
+
   const handlePay = (method: 'CONTANTI' | 'CARTA' | 'DIVISO') => {
     if (!selectedOrder) return;
     payOrder(selectedOrder.id, method);
     setSelectedOrder(null);
   };
+
+  const filteredIngredients = ingredients.filter(i => {
+    if (ingFilterStation === 'ALL') return true;
+    return i.stationTarget === ingFilterStation;
+  });
 
   return (
     <div className="h-full flex flex-col bg-zinc-950 text-zinc-100 overflow-hidden">
@@ -93,6 +171,18 @@ export const AdminView: React.FC = () => {
             }`}
           >
             <span>Listino Menu</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('INGREDIENTI')}
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1 transition-all ${
+              activeTab === 'INGREDIENTI' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <span>Ingredienti</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-zinc-900 text-white font-mono text-[11px]">
+              {ingredients.length}
+            </span>
           </button>
         </div>
       </div>
@@ -191,7 +281,271 @@ export const AdminView: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* GESTIONE INGREDIENTI (AGGIUNGI / ELIMINA / REPARTO) */}
+        {activeTab === 'INGREDIENTI' && (
+          <div className="max-w-4xl mx-auto space-y-3">
+            <div className="flex flex-wrap justify-between items-center gap-2">
+              <div className="flex items-center space-x-1 bg-zinc-900 p-1 rounded-xl border border-zinc-800 text-xs">
+                <button
+                  onClick={() => setIngFilterStation('ALL')}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                    ingFilterStation === 'ALL' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  Tutti ({ingredients.length})
+                </button>
+                <button
+                  onClick={() => setIngFilterStation('pizzeria')}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                    ingFilterStation === 'pizzeria' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  🍕 Pizzeria ({ingredients.filter(i => i.stationTarget === 'pizzeria').length})
+                </button>
+                <button
+                  onClick={() => setIngFilterStation('cucina')}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                    ingFilterStation === 'cucina' ? 'bg-emerald-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  🍳 Cucina ({ingredients.filter(i => i.stationTarget === 'cucina').length})
+                </button>
+                <button
+                  onClick={() => setIngFilterStation('bar')}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                    ingFilterStation === 'bar' ? 'bg-purple-500 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  🍸 Bar ({ingredients.filter(i => i.stationTarget === 'bar').length})
+                </button>
+              </div>
+
+              <button
+                onClick={() => handleOpenEditIng()}
+                className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs flex items-center space-x-1 shadow-md"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Nuovo Ingrediente</span>
+              </button>
+            </div>
+
+            <div className="bg-zinc-900 rounded-2xl border border-zinc-800 divide-y divide-zinc-800 overflow-hidden shadow-xl">
+              {filteredIngredients.map(ing => {
+                let stationBadge = 'bg-orange-500/15 text-orange-400 border-orange-500/30';
+                if (ing.stationTarget === 'cucina') stationBadge = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                if (ing.stationTarget === 'bar') stationBadge = 'bg-purple-500/15 text-purple-400 border-purple-500/30';
+
+                return (
+                  <div key={ing.id} className="p-3 flex items-center justify-between hover:bg-zinc-800/40">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-xs text-white">{ing.name}</span>
+                        <span className={`text-[10px] font-bold uppercase px-1.5 py-0.2 rounded border ${stationBadge}`}>
+                          {ing.stationTarget}
+                        </span>
+                        {ing.requiresClarification ? (
+                          <span className="text-[10px] font-bold bg-amber-500/15 text-amber-400 px-1.5 py-0.2 rounded border border-amber-500/30">
+                            Da Chiedere
+                          </span>
+                        ) : ing.isPreBake ? (
+                          <span className="text-[10px] font-bold bg-zinc-800 text-zinc-300 px-1.5 py-0.2 rounded border border-zinc-700">
+                            In Cottura
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold bg-sky-500/15 text-sky-400 px-1.5 py-0.2 rounded border border-sky-500/30">
+                            Dopo Cottura
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-zinc-500 font-mono">
+                        Disponibili: {ing.currentStock} {ing.unit} • Extra: € {ing.extraPrice.toFixed(2)}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <span className="font-mono font-bold text-xs text-emerald-400 mr-2">
+                        +€ {ing.extraPrice.toFixed(2)}
+                      </span>
+                      <button
+                        onClick={() => handleOpenEditIng(ing)}
+                        className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                        title="Modifica"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Eliminare l'ingrediente "${ing.name}"?`)) {
+                            deleteIngredient(ing.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg bg-zinc-800 hover:bg-rose-500/20 text-zinc-400 hover:text-rose-400"
+                        title="Elimina"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* MODALE NUOVO / MODIFICA INGREDIENTE */}
+      {showIngModal && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3">
+          <form onSubmit={handleSaveIngredient} className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 space-y-3.5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+              <h3 className="font-bold text-sm text-white">
+                {editingIng ? 'Modifica Ingrediente' : 'Nuovo Ingrediente'}
+              </h3>
+              <button type="button" onClick={() => setShowIngModal(false)} className="text-zinc-400 hover:text-white">✕</button>
+            </div>
+
+            {/* SELEZIONE REPARTO DI PROVENIENZA (OBBLIGATORIO) */}
+            <div>
+              <label className="text-[11px] font-bold text-zinc-300 block mb-1">
+                Reparto di Provenienza (Obbligatorio):
+              </label>
+              <div className="grid grid-cols-3 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setIngStation('pizzeria')}
+                  className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                    ingStation === 'pizzeria'
+                      ? 'bg-orange-500 text-white border-orange-400 shadow-sm'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                  }`}
+                >
+                  🍕 Pizzeria
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIngStation('cucina')}
+                  className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                    ingStation === 'cucina'
+                      ? 'bg-emerald-500 text-white border-emerald-400 shadow-sm'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                  }`}
+                >
+                  🍳 Cucina
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIngStation('bar')}
+                  className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                    ingStation === 'bar'
+                      ? 'bg-purple-500 text-white border-purple-400 shadow-sm'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                  }`}
+                >
+                  🍸 Bar
+                </button>
+              </div>
+            </div>
+
+            {/* NOME INGREDIENTE */}
+            <div>
+              <label className="text-[11px] text-zinc-400 block mb-1">Nome Ingrediente:</label>
+              <input
+                type="text"
+                required
+                placeholder="Es. Fiordilatte, Burrata, Salsiccia, Gin..."
+                value={ingName}
+                onChange={(e) => setIngName(e.target.value)}
+                className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white"
+              />
+            </div>
+
+            {/* APPLICAZIONE / FASE */}
+            <div>
+              <label className="text-[11px] text-zinc-400 block mb-1">Tipo / Fase di Applicazione:</label>
+              <div className="grid grid-cols-3 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setIngTiming('PRE_BAKE')}
+                  className={`py-2 px-1 rounded-xl text-[11px] font-bold border transition-all ${
+                    ingTiming === 'PRE_BAKE'
+                      ? 'bg-amber-500 text-white border-amber-400'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                  }`}
+                >
+                  🔥 In Cottura
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIngTiming('POST_BAKE')}
+                  className={`py-2 px-1 rounded-xl text-[11px] font-bold border transition-all ${
+                    ingTiming === 'POST_BAKE'
+                      ? 'bg-sky-500 text-white border-sky-400'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                  }`}
+                >
+                  🌿 Dopo Cottura
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIngTiming('CLARIFICATION')}
+                  className={`py-2 px-1 rounded-xl text-[11px] font-bold border transition-all ${
+                    ingTiming === 'CLARIFICATION'
+                      ? 'bg-rose-500 text-white border-rose-400'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                  }`}
+                >
+                  ❓ Da Chiedere
+                </button>
+              </div>
+            </div>
+
+            {/* PREZZO EXTRA E SCORTA */}
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <label className="text-[11px] text-zinc-400 block mb-1">Extra (€):</label>
+                <input
+                  type="number"
+                  step="0.50"
+                  value={ingExtraPrice}
+                  onChange={(e) => setIngExtraPrice(Number(e.target.value))}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] text-zinc-400 block mb-1">Scorta Iniziale:</label>
+                <input
+                  type="number"
+                  step="1"
+                  value={ingStock}
+                  onChange={(e) => setIngStock(Number(e.target.value))}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] text-zinc-400 block mb-1">Unità:</label>
+                <select
+                  value={ingUnit}
+                  onChange={(e: any) => setIngUnit(e.target.value)}
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white"
+                >
+                  <option value="kg">kg</option>
+                  <option value="g">g</option>
+                  <option value="pz">pz</option>
+                  <option value="l">l</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-lg mt-2"
+            >
+              SALVA INGREDIENTE
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* MODALE CASSA (SALDA CONTO) */}
       {selectedOrder && (
