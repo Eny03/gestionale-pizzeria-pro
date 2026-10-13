@@ -8,7 +8,7 @@ export const Notifications: React.FC = () => {
   if (notifications.length === 0) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full pointer-events-none">
+    <div className="fixed top-14 right-3 sm:right-4 left-3 sm:left-auto z-50 flex flex-col space-y-2 max-w-sm w-full pointer-events-none select-none">
       {notifications.map((n) => {
         let borderClass = 'border-blue-500/30 bg-slate-900/95';
         let icon = <Info className="w-5 h-5 text-sky-400 shrink-0" />;

@@ -68,6 +68,8 @@ interface AppContextType {
   toggleEndSeat: (tableId: string) => void;
   saveMenuItem: (item: MenuItem) => void;
   deleteMenuItem: (itemId: string) => void;
+  activeTableId: string | null;
+  setActiveTableId: (id: string | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -94,6 +96,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [availabilities, setAvailabilities] = useState<StaffAvailability[]>([]);
   const [shiftAssignments, setShiftAssignments] = useState<ShiftAssignment[]>([]);
   const [fairnessReport, setFairnessReport] = useState<SchedulingFairnessReport | null>(null);
+  const [activeTableId, setActiveTableId] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<NotificationToast[]>([]);
 
   const addToast = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
@@ -397,7 +400,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         splitTavolata,
         toggleEndSeat,
         saveMenuItem,
-        deleteMenuItem
+        deleteMenuItem,
+        activeTableId,
+        setActiveTableId
       }}
     >
       {children}

@@ -1,20 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RestaurantTable, RestaurantZone, Reservation, TableStatus } from '../../../shared/types';
 import {
-  LayoutGrid,
   Plus,
   Users,
-  Clock,
   Link,
   Unlink,
   Phone,
-  BookmarkPlus,
   ZoomIn,
   ZoomOut,
-  Sliders,
-  Sparkles,
-  Info
+  Maximize2,
+  UtensilsCrossed,
+  X,
+  CalendarCheck
 } from 'lucide-react';
 
 export const CapoSalaView: React.FC = () => {
@@ -27,60 +25,78 @@ export const CapoSalaView: React.FC = () => {
     createReservation,
     mergeTables,
     splitTavolata,
-    toggleEndSeat
+    toggleEndSeat,
+    setCurrentRole,
+    activeTableId,
+    setActiveTableId
   } = useApp();
 
-  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState<number>(44); // Pixel per metro (scalabile)
+  // Floor dimensions: 18m x 18m square
+  const TOTAL_FLOOR_METERS = 18;
 
-  // Modale nuova zona nel quadrato
+  // Selected table
+  const selectedTable = tables.find(t => t.id === activeTableId) || null;
+  const activeReservation = reservations.find(r => r.id === selectedTable?.activeReservationId);
+
+  // Auto-fit zoom calculation
+  const calculateFitZoom = () => {
+    if (typeof window === 'undefined') return 24;
+    const paddingX = window.innerWidth < 768 ? 24 : 48;
+    const paddingY = window.innerWidth < 768 ? 160 : 120;
+    const availWidth = window.innerWidth - paddingX;
+    const availHeight = window.innerHeight - paddingY;
+    const targetPx = Math.min(availWidth, availHeight);
+    return Math.max(16, Math.min(48, Math.floor(targetPx / TOTAL_FLOOR_METERS)));
+  };
+
+  const [zoomLevel, setZoomLevel] = useState<number>(calculateFitZoom);
+
+  // Recalculate zoom on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setZoomLevel(prev => {
+        const fit = calculateFitZoom();
+        return Math.abs(prev - fit) < 6 ? fit : prev;
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Modals state
   const [showNewZoneModal, setShowNewZoneModal] = useState(false);
   const [newZoneName, setNewZoneName] = useState('');
   const [newZoneX, setNewZoneX] = useState(1);
   const [newZoneY, setNewZoneY] = useState(1);
   const [newZoneWidth, setNewZoneWidth] = useState(8);
   const [newZoneHeight, setNewZoneHeight] = useState(7);
-  const [newZoneColor, setNewZoneColor] = useState('#ea580c');
+  const [newZoneColor, setNewZoneColor] = useState('#f97316');
 
-  // Modale unione tavolata
   const [tableToMergeWith, setTableToMergeWith] = useState<string>('');
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [resCustomerName, setResCustomerName] = useState('');
+  const [resPhone, setResPhone] = useState('');
+  const [resTime, setResTime] = useState('20:30');
 
   // Dragging state on 1m x 1m grid
   const [draggingTableId, setDraggingTableId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  // Prenotazione form state
-  const [resCustomerName, setResCustomerName] = useState('');
-  const [resPhone, setResPhone] = useState('');
-  const [resGuests, setResGuests] = useState(2);
-  const [resTime, setResTime] = useState('20:30');
-  const [resDuration, setResDuration] = useState(90);
-  const [resNotes, setResNotes] = useState('');
-
-  // Dimensioni del grande quadrato del locale (18m x 18m)
-  const TOTAL_FLOOR_METERS = 18;
-
-  const selectedTable = tables.find(t => t.id === selectedTableId);
-  const activeReservation = reservations.find(r => r.id === selectedTable?.activeReservationId);
-
-  // Se il tavolo selezionato è parte di una tavolata, trova tutti i tavoli del gruppo
+  // Tavolata members
   const tavolataMembers = selectedTable?.tavolataGroupId
     ? tables.filter(t => t.tavolataGroupId === selectedTable.tavolataGroupId)
     : [];
-
   const tavolataTotalSeats = tavolataMembers.reduce((sum, t) => sum + t.seats, 0);
 
-  // Gestione Drag & Drop sulla griglia 1m x 1m (snap esatto al metro con supporto Touch & Mouse)
-  const handleMouseDownTable = (e: React.MouseEvent, table: RestaurantTable) => {
-    e.stopPropagation();
-    setSelectedTableId(table.id);
+  // Drag table handlers
+  const handleStartDrag = (clientX: number, clientY: number, table: RestaurantTable) => {
+    setActiveTableId(table.id);
     setDraggingTableId(table.id);
-
     if (gridContainerRef.current) {
       const rect = gridContainerRef.current.getBoundingClientRect();
-      const clickXInMeters = (e.clientX - rect.left) / zoomLevel;
-      const clickYInMeters = (e.clientY - rect.top) / zoomLevel;
+      const clickXInMeters = (clientX - rect.left) / zoomLevel;
+      const clickYInMeters = (clientY - rect.top) / zoomLevel;
       setDragOffset({
         x: clickXInMeters - table.x,
         y: clickYInMeters - table.y
@@ -88,65 +104,18 @@ export const CapoSalaView: React.FC = () => {
     }
   };
 
-  const handleTouchStartTable = (e: React.TouchEvent, table: RestaurantTable) => {
-    e.stopPropagation();
-    setSelectedTableId(table.id);
-    setDraggingTableId(table.id);
-
-    if (gridContainerRef.current && e.touches[0]) {
-      const rect = gridContainerRef.current.getBoundingClientRect();
-      const clickXInMeters = (e.touches[0].clientX - rect.left) / zoomLevel;
-      const clickYInMeters = (e.touches[0].clientY - rect.top) / zoomLevel;
-      setDragOffset({
-        x: clickXInMeters - table.x,
-        y: clickYInMeters - table.y
-      });
-    }
-  };
-
-  const handleMouseMoveGrid = (e: React.MouseEvent) => {
+  const handleMoveDrag = (clientX: number, clientY: number) => {
     if (!draggingTableId || !gridContainerRef.current) return;
-
     const rect = gridContainerRef.current.getBoundingClientRect();
-    const rawXInMeters = (e.clientX - rect.left) / zoomLevel - dragOffset.x;
-    const rawYInMeters = (e.clientY - rect.top) / zoomLevel - dragOffset.y;
+    const rawX = (clientX - rect.left) / zoomLevel - dragOffset.x;
+    const rawY = (clientY - rect.top) / zoomLevel - dragOffset.y;
 
-    const snappedX = Math.round(rawXInMeters);
-    const snappedY = Math.round(rawYInMeters);
-
-    const clampedX = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, snappedX));
-    const clampedY = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, snappedY));
+    const clampedX = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, Math.round(rawX)));
+    const clampedY = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, Math.round(rawY)));
 
     const currentTable = tables.find(t => t.id === draggingTableId);
     if (currentTable && (currentTable.x !== clampedX || currentTable.y !== clampedY)) {
-      updateTable({
-        ...currentTable,
-        x: clampedX,
-        y: clampedY
-      });
-    }
-  };
-
-  const handleTouchMoveGrid = (e: React.TouchEvent) => {
-    if (!draggingTableId || !gridContainerRef.current || !e.touches[0]) return;
-
-    const rect = gridContainerRef.current.getBoundingClientRect();
-    const rawXInMeters = (e.touches[0].clientX - rect.left) / zoomLevel - dragOffset.x;
-    const rawYInMeters = (e.touches[0].clientY - rect.top) / zoomLevel - dragOffset.y;
-
-    const snappedX = Math.round(rawXInMeters);
-    const snappedY = Math.round(rawYInMeters);
-
-    const clampedX = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, snappedX));
-    const clampedY = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, snappedY));
-
-    const currentTable = tables.find(t => t.id === draggingTableId);
-    if (currentTable && (currentTable.x !== clampedX || currentTable.y !== clampedY)) {
-      updateTable({
-        ...currentTable,
-        x: clampedX,
-        y: clampedY
-      });
+      updateTable({ ...currentTable, x: clampedX, y: clampedY });
     }
   };
 
@@ -154,12 +123,28 @@ export const CapoSalaView: React.FC = () => {
     setDraggingTableId(null);
   };
 
-  // Creazione nuova zona all'interno del quadrato del locale
+  const handleAddTable = () => {
+    const nextNumber = Math.max(0, ...tables.map(t => t.number)) + 1;
+    const newTable: RestaurantTable = {
+      id: `t-${Date.now()}`,
+      number: nextNumber,
+      x: 2,
+      y: 2,
+      widthMeters: 1.0,
+      heightMeters: 1.0,
+      shape: 'SQUARE',
+      seats: 2,
+      hasEndSeat: false,
+      status: 'LIBERO'
+    };
+    updateTable(newTable);
+    setActiveTableId(newTable.id);
+  };
+
   const handleCreateZone = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newZoneName) return;
-
-    const newZone: RestaurantZone = {
+    createZone({
       id: `z-${Date.now()}`,
       name: newZoneName,
       x: Number(newZoneX),
@@ -167,55 +152,15 @@ export const CapoSalaView: React.FC = () => {
       widthMeters: Number(newZoneWidth),
       heightMeters: Number(newZoneHeight),
       colorTheme: newZoneColor
-    };
-
-    createZone(newZone);
+    });
     setShowNewZoneModal(false);
     setNewZoneName('');
   };
 
-  // Aggiungi un nuovo tavolo 1m x 1m
-  const handleAddTable = () => {
-    const nextNumber = Math.max(0, ...tables.map(t => t.number)) + 1;
-    const newTable: RestaurantTable = {
-      id: `t-${Date.now()}`,
-      number: nextNumber,
-      x: 3,
-      y: 3,
-      widthMeters: 1.0, // TAVOLO ESATTAMENTE 1m x 1m
-      heightMeters: 1.0,
-      shape: 'SQUARE',
-      seats: 2, // 2 PERSONE STANDARD
-      hasEndSeat: false,
-      status: 'LIBERO'
-    };
-
-    updateTable(newTable);
-    setSelectedTableId(newTable.id);
-  };
-
-  // Accorpa due tavoli in una Tavolata
-  const handleMergeTables = () => {
-    if (!selectedTable || !tableToMergeWith) return;
-    mergeTables([selectedTable.id, tableToMergeWith]);
-    setTableToMergeWith('');
-  };
-
-  // Sciogli tavolata
-  const handleSplitTavolata = () => {
-    if (!selectedTable?.tavolataGroupId) return;
-    splitTavolata(selectedTable.tavolataGroupId);
-  };
-
-  // Aggiorna stato tavolo
   const handleChangeStatus = (status: TableStatus) => {
     if (!selectedTable) return;
-
-    // Se è parte di una tavolata, aggiorna lo stato di tutti i tavoli uniti
     if (selectedTable.tavolataGroupId) {
-      tavolataMembers.forEach(t => {
-        updateTable({ ...t, status });
-      });
+      tavolataMembers.forEach(t => updateTable({ ...t, status }));
     } else {
       updateTable({
         ...selectedTable,
@@ -225,105 +170,107 @@ export const CapoSalaView: React.FC = () => {
     }
   };
 
-  // Salva prenotazione
   const handleSaveReservation = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTable || !resCustomerName) return;
-
     const newRes: Reservation = {
       id: `res-${Date.now()}`,
       tableId: selectedTable.id,
       tableNumber: selectedTable.number,
       customerName: resCustomerName,
       customerPhone: resPhone,
-      guestsCount: resGuests,
+      guestsCount: selectedTable.seats,
       reservationTime: resTime,
-      expectedDurationMinutes: resDuration,
-      notes: resNotes,
+      expectedDurationMinutes: 90,
       status: 'CONFERMATA',
       createdAt: new Date().toISOString()
     };
-
     createReservation(newRes);
     handleChangeStatus('PRENOTATO');
-
+    setShowBookingForm(false);
     setResCustomerName('');
     setResPhone('');
-    setResNotes('');
   };
 
-  return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row bg-slate-950 text-slate-100 overflow-hidden select-none">
-      {/* AREA CENTRALE: GRANDE QUADRATO DEL LOCALE CON ZONE E TAVOLI */}
-      <div className="flex-1 flex flex-col overflow-hidden border-r border-slate-800">
-        {/* Toolbar Superiore */}
-        <div className="p-3 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-sm text-white flex items-center space-x-1.5">
-                <LayoutGrid className="w-4 h-4 text-orange-400" />
-                <span>Planimetria Unificata Locale</span>
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono border border-slate-700">
-                {TOTAL_FLOOR_METERS}m x {TOTAL_FLOOR_METERS}m
-              </span>
-            </div>
+  const handleTakeOrder = () => {
+    if (!selectedTable) return;
+    setActiveTableId(selectedTable.id);
+    setCurrentRole('CAMERIERE');
+  };
 
-            <div className="hidden sm:flex items-center space-x-1 text-xs text-slate-400">
-              <Info className="w-3.5 h-3.5 text-sky-400" />
-              <span>Tavoli 1m x 1m (2-3 posti). Affianca per creare Tavolate.</span>
-            </div>
+  const freeCount = tables.filter(t => t.status === 'LIBERO').length;
+
+  return (
+    <div className="h-full flex flex-col lg:flex-row bg-zinc-950 text-zinc-100 select-none overflow-hidden">
+      {/* AREA PLANIMETRIA */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Minimal Toolbar */}
+        <div className="px-3 py-2 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2">
+            <span className="font-bold text-sm text-white">Tavoli</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-mono">
+              {freeCount} liberi
+            </span>
+            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+              di {tables.length}
+            </span>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5">
             {/* Zoom Controls */}
-            <div className="flex items-center space-x-1 bg-slate-800 p-1 rounded-lg border border-slate-700 text-xs">
+            <div className="flex items-center bg-zinc-800 rounded-lg p-0.5 border border-zinc-700/60">
               <button
-                onClick={() => setZoomLevel(Math.max(32, zoomLevel - 4))}
-                className="p-1 hover:text-white text-slate-400"
-                title="Riduci Zoom"
+                onClick={() => setZoomLevel(Math.max(16, zoomLevel - 3))}
+                className="p-1.5 text-zinc-400 hover:text-white"
+                title="Riduci"
               >
                 <ZoomOut className="w-3.5 h-3.5" />
               </button>
-              <span className="px-1 text-[11px] font-mono text-slate-300">{Math.round((zoomLevel / 44) * 100)}%</span>
               <button
-                onClick={() => setZoomLevel(Math.min(64, zoomLevel + 4))}
-                className="p-1 hover:text-white text-slate-400"
-                title="Aumenta Zoom"
+                onClick={() => setZoomLevel(calculateFitZoom())}
+                className="px-2 py-1 text-[11px] font-mono text-zinc-300 hover:text-white flex items-center space-x-1"
+                title="Adatta allo schermo"
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span className="hidden sm:inline">Fit</span>
+              </button>
+              <button
+                onClick={() => setZoomLevel(Math.min(50, zoomLevel + 3))}
+                className="p-1.5 text-zinc-400 hover:text-white"
+                title="Ingrandisci"
               >
                 <ZoomIn className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            {/* Aggiungi Zona & Tavolo */}
+            {/* Aggiungi Tavolo & Zona */}
             <button
               onClick={() => setShowNewZoneModal(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 text-xs font-bold flex items-center space-x-1"
+              className="px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold border border-zinc-700 hidden sm:flex items-center space-x-1"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ Nuova Zona</span>
+              <span>Zona</span>
             </button>
 
             <button
               onClick={handleAddTable}
-              className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center space-x-1 shadow-sm"
+              className="px-3 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center space-x-1"
             >
-              <Plus className="w-4 h-4" />
-              <span>+ Tavolo 1m x 1m</span>
+              <Plus className="w-3.5 h-3.5" />
+              <span>Tavolo 1m</span>
             </button>
           </div>
         </div>
 
-        {/* CONTAINER CANVAS METRICO INTERATTIVO */}
+        {/* Canvas Planimetria (18m x 18m) */}
         <div
-          className="flex-1 overflow-auto p-4 sm:p-6 bg-slate-950 flex items-center justify-center relative cursor-crosshair touch-none"
-          onMouseMove={handleMouseMoveGrid}
+          className="flex-1 overflow-auto p-2 sm:p-4 bg-zinc-950 flex items-center justify-center relative touch-none"
+          onMouseMove={(e) => handleMoveDrag(e.clientX, e.clientY)}
           onMouseUp={handleEndDrag}
-          onTouchMove={handleTouchMoveGrid}
+          onTouchMove={(e) => e.touches[0] && handleMoveDrag(e.touches[0].clientX, e.touches[0].clientY)}
           onTouchEnd={handleEndDrag}
-          onClick={() => setSelectedTableId(null)}
+          onClick={() => setActiveTableId(null)}
         >
-          {/* IL GRANDE QUADRATO GLOBALE DEL LOCALE (18m x 18m) */}
           <div
             ref={gridContainerRef}
             style={{
@@ -331,34 +278,14 @@ export const CapoSalaView: React.FC = () => {
               height: `${TOTAL_FLOOR_METERS * zoomLevel}px`,
               backgroundSize: `${zoomLevel}px ${zoomLevel}px`,
               backgroundImage: `
-                linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px)
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
               `
             }}
-            className="relative bg-slate-900 rounded-3xl border-4 border-slate-700 shadow-2xl overflow-hidden select-none"
+            className="relative bg-zinc-900/90 rounded-2xl border border-zinc-700/80 shadow-2xl overflow-hidden select-none"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Righello Metrico (1m, 2m, ...) */}
-            {Array.from({ length: TOTAL_FLOOR_METERS }).map((_, i) => (
-              <span
-                key={`metric-x-${i}`}
-                style={{ left: `${i * zoomLevel + 3}px` }}
-                className="absolute top-1 text-[9px] font-mono text-slate-500 pointer-events-none select-none"
-              >
-                {i}m
-              </span>
-            ))}
-            {Array.from({ length: TOTAL_FLOOR_METERS }).map((_, i) => (
-              <span
-                key={`metric-y-${i}`}
-                style={{ top: `${i * zoomLevel + 3}px` }}
-                className="absolute left-1 text-[9px] font-mono text-slate-500 pointer-events-none select-none"
-              >
-                {i}m
-              </span>
-            ))}
-
-            {/* 1. ZONE SUDDIVISE ALL'INTERNO DEL GRANDE QUADRATO */}
+            {/* Zone all'interno del quadrato */}
             {zones.map(zone => (
               <div
                 key={zone.id}
@@ -367,79 +294,64 @@ export const CapoSalaView: React.FC = () => {
                   top: `${zone.y * zoomLevel}px`,
                   width: `${zone.widthMeters * zoomLevel}px`,
                   height: `${zone.heightMeters * zoomLevel}px`,
-                  borderColor: zone.colorTheme
+                  borderColor: `${zone.colorTheme}66`
                 }}
-                className="absolute rounded-2xl border-2 border-dashed bg-slate-800/25 pointer-events-none p-2 flex flex-col justify-between"
+                className="absolute rounded-xl border border-dashed bg-zinc-800/20 pointer-events-none p-1.5 flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between">
-                  <span
-                    style={{ backgroundColor: `${zone.colorTheme}33`, color: zone.colorTheme, borderColor: zone.colorTheme }}
-                    className="text-[11px] font-extrabold uppercase px-2 py-0.5 rounded-lg border backdrop-blur-sm"
-                  >
-                    {zone.name}
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    {zone.widthMeters}m x {zone.heightMeters}m
-                  </span>
-                </div>
+                <span
+                  style={{ color: zone.colorTheme }}
+                  className="text-[10px] font-bold uppercase tracking-wider truncate"
+                >
+                  {zone.name}
+                </span>
               </div>
             ))}
 
-            {/* 2. TAVOLI 1M X 1M E TAVOLATE ACCORPATE */}
+            {/* Tavoli 1m x 1m */}
             {tables.map(table => {
-              const isSelected = selectedTableId === table.id;
+              const isSelected = activeTableId === table.id;
               const isTavolata = Boolean(table.tavolataGroupId);
-              const tableSizePx = 1.0 * zoomLevel; // 1m x 1m esatto
+              const sizePx = zoomLevel; // 1m x 1m esatto
               const leftPx = table.x * zoomLevel;
               const topPx = table.y * zoomLevel;
 
-              let statusBg = 'bg-emerald-500/20 border-emerald-500 text-emerald-300';
-              if (table.status === 'OCCUPATO') statusBg = 'bg-rose-500/20 border-rose-500 text-rose-300';
-              if (table.status === 'PRENOTATO') statusBg = 'bg-amber-500/20 border-amber-500 text-amber-300';
+              let statusClasses = 'bg-emerald-500/20 border-emerald-500 text-emerald-300';
+              if (table.status === 'OCCUPATO') statusClasses = 'bg-rose-500/25 border-rose-500 text-rose-300';
+              if (table.status === 'PRENOTATO') statusClasses = 'bg-amber-500/25 border-amber-500 text-amber-300';
+              if (isTavolata) statusClasses = 'bg-purple-500/25 border-purple-400 text-purple-300';
 
               return (
                 <div
                   key={table.id}
-                  onMouseDown={(e) => handleMouseDownTable(e, table)}
-                  onTouchStart={(e) => handleTouchStartTable(e, table)}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    handleStartDrag(e.clientX, e.clientY, table);
+                  }}
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    if (e.touches[0]) handleStartDrag(e.touches[0].clientX, e.touches[0].clientY, table);
+                  }}
                   style={{
-                    width: `${tableSizePx}px`,
-                    height: `${tableSizePx}px`,
+                    width: `${sizePx}px`,
+                    height: `${sizePx}px`,
                     left: `${leftPx}px`,
                     top: `${topPx}px`
                   }}
-                  className={`absolute cursor-grab active:cursor-grabbing border-2 rounded-xl flex flex-col items-center justify-center transition-all select-none shadow-md ${statusBg} ${
-                    isTavolata ? 'ring-2 ring-purple-500 border-purple-400' : ''
-                  } ${isSelected ? 'ring-4 ring-orange-400 z-30 scale-105' : 'z-20'}`}
+                  className={`absolute border-2 rounded-lg flex flex-col items-center justify-center transition-all cursor-pointer shadow-md select-none ${statusClasses} ${
+                    isSelected ? 'ring-2 ring-white scale-105 z-30' : 'z-20'
+                  }`}
                 >
-                  {/* Sedia Superiore (Posto 1) */}
-                  <div className="absolute -top-1.5 w-4 h-1.5 rounded-full bg-slate-400/80"></div>
-
-                  {/* Sedia Inferiore (Posto 2) */}
-                  <div className="absolute -bottom-1.5 w-4 h-1.5 rounded-full bg-slate-400/80"></div>
-
-                  {/* Sedia all'Estremo (Posto 3 opzionale) */}
+                  {/* Sedia Alto (Posto 1) */}
+                  <div className="absolute -top-1 w-2.5 h-1 rounded-full bg-zinc-400/80" />
+                  {/* Sedia Basso (Posto 2) */}
+                  <div className="absolute -bottom-1 w-2.5 h-1 rounded-full bg-zinc-400/80" />
+                  {/* Sedia Estremo (3° posto opzionale) */}
                   {table.hasEndSeat && (
-                    <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-full bg-amber-400" title="3° Posto Estremo"></div>
+                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-2.5 rounded-full bg-amber-400" />
                   )}
 
-                  {/* Nome Tavolo */}
-                  <span className="text-[10px] font-black leading-tight">
-                    T{table.number}
-                  </span>
-
-                  {/* Icona Posti & Capacità */}
-                  <span className="text-[9px] font-bold opacity-90 flex items-center space-x-0.5">
-                    <Users className="w-2.5 h-2.5" />
-                    <span>{table.seats}p</span>
-                  </span>
-
-                  {/* Badge Tavolata */}
-                  {isTavolata && (
-                    <span className="absolute -top-2.5 text-[8px] font-black uppercase bg-purple-600 text-white px-1 rounded-sm shadow-sm">
-                      UNITA
-                    </span>
-                  )}
+                  <span className="text-[10px] font-black leading-none">{table.number}</span>
+                  <span className="text-[8px] font-bold opacity-80 mt-0.5">{table.seats}p</span>
                 </div>
               );
             })}
@@ -447,371 +359,265 @@ export const CapoSalaView: React.FC = () => {
         </div>
       </div>
 
-      {/* PANNELLO LATERALE (SIDEBAR SU DESKTOP, BOTTOM SHEET SU SMARTPHONE) */}
-      <div
-        className={`${
-          selectedTable
-            ? 'fixed inset-x-0 bottom-0 z-40 max-h-[85vh] lg:relative lg:inset-auto lg:z-auto lg:w-96 rounded-t-3xl lg:rounded-none shadow-2xl lg:shadow-none'
-            : 'hidden lg:flex lg:w-96'
-        } bg-slate-950 lg:bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex-col justify-between overflow-y-auto pb-safe`}
-      >
-        <div className="p-3.5 sm:p-4 border-b border-slate-800 flex items-center justify-between">
-          <div>
-            <h2 className="font-extrabold text-sm sm:text-base text-white flex items-center space-x-1.5">
-              <LayoutGrid className="w-4 h-4 text-orange-400" />
-              <span>{selectedTable ? `Tavolo #${selectedTable.number}` : 'Dettaglio Tavolo'}</span>
-            </h2>
-            <p className="text-[11px] text-slate-400">
-              {selectedTable ? `${selectedTable.seats} persone • ${selectedTable.status}` : 'Tavoli 1m x 1m'}
-            </p>
-          </div>
-          {selectedTable && (
-            <button
-              onClick={() => setSelectedTableId(null)}
-              className="p-1 text-slate-400 hover:text-white"
-            >
-              ✕
-            </button>
-          )}
-        </div>
-
-        {selectedTable ? (
-          <div className="p-3.5 sm:p-4 space-y-3.5 flex-1">
-            {/* SCHEDA TAVOLO SELEZIONATO */}
-            <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-base font-black text-white">Tavolo #{selectedTable.number}</span>
-                  <span className="text-xs text-slate-400 block font-mono">
-                    Dimensione: 1m x 1m • Coordinate: ({selectedTable.x}m, {selectedTable.y}m)
-                  </span>
-                </div>
-                <span className="text-sm font-black text-emerald-400 font-mono bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+      {/* PANNELLO TAVOLO (Bottom Sheet Mobile / Sidebar Desktop) */}
+      {selectedTable && (
+        <div className="fixed inset-x-0 bottom-14 lg:bottom-0 lg:relative lg:inset-auto z-40 lg:w-80 bg-zinc-900 border-t lg:border-t-0 lg:border-l border-zinc-800 p-4 space-y-3.5 shadow-2xl rounded-t-2xl lg:rounded-none max-h-[70vh] lg:max-h-none overflow-y-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-extrabold text-base text-white">
+                  Tavolo #{selectedTable.number}
+                </span>
+                <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-zinc-800 text-zinc-300">
                   {selectedTable.seats} Posti
                 </span>
               </div>
+              {selectedTable.tavolataName && (
+                <span className="text-xs text-purple-400 font-bold block">
+                  {selectedTable.tavolataName} ({tavolataTotalSeats}p)
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => setActiveTableId(null)}
+              className="p-1 rounded-lg text-zinc-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
 
-              {/* TASTO TERZO POSTO AGLI ESTREMI (2 o 3 persone) */}
-              <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold text-slate-200 block">3° Posto a Capotavola:</span>
-                  <span className="text-[11px] text-slate-400">
-                    {selectedTable.hasEndSeat ? 'Attivo (Ospita 3 persone)' : 'Disattivato (2 persone)'}
-                  </span>
+          {/* Azione Primaria: PRENDI COMANDA */}
+          <button
+            onClick={handleTakeOrder}
+            className="w-full py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.99] text-white font-extrabold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-orange-500/20"
+          >
+            <UtensilsCrossed className="w-4 h-4" />
+            <span>PRENDI COMANDA</span>
+          </button>
+
+          {/* Toggle Rapido Posti (2 o 3 persone agli estremi) */}
+          <div>
+            <span className="text-[11px] font-semibold text-zinc-400 block mb-1">Capacità Tavolo:</span>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => selectedTable.hasEndSeat && toggleEndSeat(selectedTable.id)}
+                className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all ${
+                  !selectedTable.hasEndSeat
+                    ? 'bg-zinc-800 text-white border-zinc-600'
+                    : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                }`}
+              >
+                2 Persone (Standard)
+              </button>
+              <button
+                onClick={() => !selectedTable.hasEndSeat && toggleEndSeat(selectedTable.id)}
+                className={`py-2 px-3 rounded-lg text-xs font-bold border transition-all ${
+                  selectedTable.hasEndSeat
+                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                    : 'bg-zinc-950 text-zinc-400 border-zinc-800'
+                }`}
+              >
+                + 3° Posto Estremo
+              </button>
+            </div>
+          </div>
+
+          {/* Status Pills */}
+          <div>
+            <span className="text-[11px] font-semibold text-zinc-400 block mb-1">Stato:</span>
+            <div className="grid grid-cols-3 gap-1.5">
+              <button
+                onClick={() => handleChangeStatus('LIBERO')}
+                className={`py-2 rounded-lg text-xs font-bold border transition-all ${
+                  selectedTable.status === 'LIBERO'
+                    ? 'bg-emerald-500 text-white border-emerald-400'
+                    : 'bg-zinc-800 text-emerald-400 border-zinc-700'
+                }`}
+              >
+                Libero
+              </button>
+              <button
+                onClick={() => handleChangeStatus('OCCUPATO')}
+                className={`py-2 rounded-lg text-xs font-bold border transition-all ${
+                  selectedTable.status === 'OCCUPATO'
+                    ? 'bg-rose-500 text-white border-rose-400'
+                    : 'bg-zinc-800 text-rose-400 border-zinc-700'
+                }`}
+              >
+                Occupato
+              </button>
+              <button
+                onClick={() => handleChangeStatus('PRENOTATO')}
+                className={`py-2 rounded-lg text-xs font-bold border transition-all ${
+                  selectedTable.status === 'PRENOTATO'
+                    ? 'bg-amber-500 text-white border-amber-400'
+                    : 'bg-zinc-800 text-amber-400 border-zinc-700'
+                }`}
+              >
+                Prenotato
+              </button>
+            </div>
+          </div>
+
+          {/* Gestione Tavolata (Affianca / Separa) */}
+          <div>
+            <span className="text-[11px] font-semibold text-zinc-400 block mb-1">Tavolata:</span>
+            {selectedTable.tavolataGroupId ? (
+              <div className="space-y-1.5">
+                <div className="text-xs text-zinc-300 bg-zinc-950 p-2 rounded-lg border border-zinc-800 flex justify-between">
+                  <span>Uniti: {tavolataMembers.map(t => `#${t.number}`).join(', ')}</span>
+                  <span className="font-bold text-purple-400">{tavolataTotalSeats}p</span>
                 </div>
                 <button
-                  onClick={() => toggleEndSeat(selectedTable.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${
-                    selectedTable.hasEndSeat
-                      ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                      : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-                  }`}
+                  onClick={() => splitTavolata(selectedTable.tavolataGroupId!)}
+                  className="w-full py-2 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-bold text-xs rounded-lg border border-rose-500/30 flex items-center justify-center space-x-1.5"
                 >
-                  {selectedTable.hasEndSeat ? '✓ 3 Persone' : '+ Aggiungi 3°'}
+                  <Unlink className="w-3.5 h-3.5" />
+                  <span>Sciogli Tavolata</span>
                 </button>
               </div>
-
-              {/* SEZIONE TAVOLATA ACCORPATA */}
-              <div className="pt-2 border-t border-slate-700/60 space-y-2">
-                <span className="text-[11px] font-black uppercase tracking-wider text-purple-400 block">
-                  GESTIONE TAVOLATA (AFFIANCAMENTO):
-                </span>
-
-                {selectedTable.tavolataGroupId ? (
-                  <div className="bg-purple-950/40 border border-purple-500/40 p-2.5 rounded-xl space-y-2 text-xs">
-                    <div className="flex items-center justify-between text-purple-200 font-bold">
-                      <span>{selectedTable.tavolataName}</span>
-                      <span className="font-mono bg-purple-900/60 px-2 py-0.5 rounded">
-                        Totale: {tavolataTotalSeats} persone
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-300">
-                      Tavoli uniti: {tavolataMembers.map(t => `#${t.number}`).join(', ')}
-                    </p>
-                    <button
-                      onClick={handleSplitTavolata}
-                      className="w-full py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-bold rounded-lg border border-rose-500/30 flex items-center justify-center space-x-1.5 transition-colors"
-                    >
-                      <Unlink className="w-3.5 h-3.5" />
-                      <span>Sciogli Tavolata (Separa i tavoli)</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <select
-                      value={tableToMergeWith}
-                      onChange={(e) => setTableToMergeWith(e.target.value)}
-                      className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-purple-400"
-                    >
-                      <option value="">Unisci con tavolo...</option>
-                      {tables
-                        .filter(t => t.id !== selectedTable.id)
-                        .map(t => (
-                          <option key={t.id} value={t.id}>
-                            Tavolo #{t.number} ({t.seats} posti)
-                          </option>
-                        ))}
-                    </select>
-                    <button
-                      onClick={handleMergeTables}
-                      disabled={!tableToMergeWith}
-                      className="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg disabled:opacity-50 flex items-center space-x-1 shrink-0"
-                    >
-                      <Link className="w-3.5 h-3.5" />
-                      <span>Unisci</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* PULSANTI CAMBIO STATO */}
-              <div className="pt-2 border-t border-slate-700/60">
-                <label className="text-[11px] font-bold text-slate-400 block mb-1.5 uppercase">
-                  Stato Tavolo:
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    onClick={() => handleChangeStatus('LIBERO')}
-                    className={`py-2 px-1 rounded-lg text-xs font-bold border transition-all ${
-                      selectedTable.status === 'LIBERO'
-                        ? 'bg-emerald-500 text-white border-emerald-400 shadow-sm'
-                        : 'bg-slate-800 text-emerald-400 border-emerald-500/30'
-                    }`}
-                  >
-                    Libero
-                  </button>
-                  <button
-                    onClick={() => handleChangeStatus('OCCUPATO')}
-                    className={`py-2 px-1 rounded-lg text-xs font-bold border transition-all ${
-                      selectedTable.status === 'OCCUPATO'
-                        ? 'bg-rose-500 text-white border-rose-400 shadow-sm'
-                        : 'bg-slate-800 text-rose-400 border-rose-500/30'
-                    }`}
-                  >
-                    Occupato
-                  </button>
-                  <button
-                    onClick={() => handleChangeStatus('PRENOTATO')}
-                    className={`py-2 px-1 rounded-lg text-xs font-bold border transition-all ${
-                      selectedTable.status === 'PRENOTATO'
-                        ? 'bg-amber-500 text-white border-amber-400 shadow-sm'
-                        : 'bg-slate-800 text-amber-400 border-amber-500/30'
-                    }`}
-                  >
-                    Prenotato
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* PRENOTAZIONE TAVOLO O TAVOLATA */}
-            {activeReservation && (
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 space-y-1.5 text-xs">
-                <div className="flex items-center justify-between text-amber-300 font-bold">
-                  <span>Prenotazione:</span>
-                  <span className="font-mono">{activeReservation.reservationTime}</span>
-                </div>
-                <div className="text-white font-semibold">
-                  {activeReservation.customerName} ({activeReservation.guestsCount} pers.)
-                </div>
-                {activeReservation.customerPhone && (
-                  <div className="text-slate-400 flex items-center space-x-1">
-                    <Phone className="w-3 h-3" />
-                    <span>{activeReservation.customerPhone}</span>
-                  </div>
-                )}
+            ) : (
+              <div className="flex space-x-1.5">
+                <select
+                  value={tableToMergeWith}
+                  onChange={(e) => setTableToMergeWith(e.target.value)}
+                  className="flex-1 bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white focus:outline-none"
+                >
+                  <option value="">Unisci con tavolo...</option>
+                  {tables
+                    .filter(t => t.id !== selectedTable.id)
+                    .map(t => (
+                      <option key={t.id} value={t.id}>
+                        Tavolo #{t.number} ({t.seats}p)
+                      </option>
+                    ))}
+                </select>
+                <button
+                  onClick={() => {
+                    if (tableToMergeWith) {
+                      mergeTables([selectedTable.id, tableToMergeWith]);
+                      setTableToMergeWith('');
+                    }
+                  }}
+                  disabled={!tableToMergeWith}
+                  className="px-3 py-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white font-bold text-xs rounded-lg flex items-center space-x-1"
+                >
+                  <Link className="w-3.5 h-3.5" />
+                  <span>Unisci</span>
+                </button>
               </div>
             )}
-
-            {/* Form Nuova Prenotazione */}
-            <form onSubmit={handleSaveReservation} className="bg-slate-800/40 p-4 rounded-xl border border-slate-750 space-y-2.5">
-              <h3 className="text-xs font-bold text-slate-200 flex items-center space-x-1.5 uppercase">
-                <BookmarkPlus className="w-4 h-4 text-orange-400" />
-                <span>Prenota Tavolo #{selectedTable.number}</span>
-              </h3>
-
-              <div className="space-y-1">
-                <label className="text-[11px] text-slate-400">Nome Cliente:</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Es. Famiglia Rossi"
-                  value={resCustomerName}
-                  onChange={(e) => setResCustomerName(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-400"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <label className="text-[11px] text-slate-400">Telefono:</label>
-                  <input
-                    type="tel"
-                    placeholder="+39 340..."
-                    value={resPhone}
-                    onChange={(e) => setResPhone(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-400"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] text-slate-400">N. Persone:</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={25}
-                    value={resGuests}
-                    onChange={(e) => setResGuests(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-400 font-bold font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <label className="text-[11px] text-slate-400">Orario:</label>
-                  <input
-                    type="time"
-                    value={resTime}
-                    onChange={(e) => setResTime(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-400 font-mono"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] text-slate-400">Durata Stimata:</label>
-                  <select
-                    value={resDuration}
-                    onChange={(e) => setResDuration(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"
-                  >
-                    <option value={60}>60 minuti</option>
-                    <option value={90}>90 minuti</option>
-                    <option value={120}>120 minuti</option>
-                  </select>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition-all mt-1"
-              >
-                Conferma Prenotazione
-              </button>
-            </form>
           </div>
-        ) : (
-          <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center flex-1">
-            <LayoutGrid className="w-12 h-12 text-slate-700 stroke-1 mb-2" />
-            <p className="text-sm font-semibold">Nessun tavolo selezionato</p>
-            <p className="text-xs text-slate-500 mt-1">
-              Fai clic su un tavolo 1m x 1m per gestirne i posti (2 o 3 persone) o per unirlo in una tavolata.
-            </p>
-          </div>
-        )}
-      </div>
 
-      {/* MODALE NUOVA ZONA NEL QUADRATO DEL LOCALE */}
+          {/* Prenotazione (Compatta) */}
+          {activeReservation ? (
+            <div className="bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-lg text-xs space-y-1">
+              <div className="flex justify-between font-bold text-amber-300">
+                <span>{activeReservation.customerName}</span>
+                <span className="font-mono">{activeReservation.reservationTime}</span>
+              </div>
+              {activeReservation.customerPhone && (
+                <div className="text-zinc-400 flex items-center space-x-1">
+                  <Phone className="w-3 h-3" />
+                  <span>{activeReservation.customerPhone}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              {!showBookingForm ? (
+                <button
+                  onClick={() => setShowBookingForm(true)}
+                  className="w-full py-1.5 text-xs text-zinc-400 hover:text-zinc-200 border border-dashed border-zinc-700 rounded-lg"
+                >
+                  + Aggiungi Prenotazione
+                </button>
+              ) : (
+                <form onSubmit={handleSaveReservation} className="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 space-y-2 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-zinc-300">Nuova Prenotazione</span>
+                    <button type="button" onClick={() => setShowBookingForm(false)} className="text-zinc-500 hover:text-white">✕</button>
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nome cliente"
+                    value={resCustomerName}
+                    onChange={(e) => setResCustomerName(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded p-1.5 text-white"
+                  />
+                  <div className="flex space-x-1.5">
+                    <input
+                      type="tel"
+                      placeholder="Tel. (opzionale)"
+                      value={resPhone}
+                      onChange={(e) => setResPhone(e.target.value)}
+                      className="flex-1 bg-zinc-900 border border-zinc-700 rounded p-1.5 text-white"
+                    />
+                    <input
+                      type="time"
+                      value={resTime}
+                      onChange={(e) => setResTime(e.target.value)}
+                      className="w-24 bg-zinc-900 border border-zinc-700 rounded p-1.5 text-white"
+                    />
+                  </div>
+                  <button type="submit" className="w-full py-1.5 bg-amber-500 text-white font-bold rounded">
+                    Salva Prenotazione
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Modal Nuova Zona */}
       {showNewZoneModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleCreateZone} className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <h3 className="text-base font-extrabold text-white">Disegna Nuova Zona nella Planimetria</h3>
-            <p className="text-xs text-slate-400">
-              Definisci la posizione (X, Y) e le dimensioni (metri) all'interno del quadrato del locale.
-            </p>
-
-            <div className="space-y-1">
-              <label className="text-xs text-slate-400">Nome Zona:</label>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <form onSubmit={handleCreateZone} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 max-w-sm w-full space-y-3.5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+              <h3 className="font-bold text-white text-sm">Nuova Zona nel Locale</h3>
+              <button type="button" onClick={() => setShowNewZoneModal(false)} className="text-zinc-400 hover:text-white">✕</button>
+            </div>
+            <div>
+              <label className="text-xs text-zinc-400 block mb-1">Nome Zona:</label>
               <input
                 type="text"
                 required
-                placeholder="Es. Dehors Esterno, Sala Giardino..."
+                placeholder="Es. Dehor, Sala Interna, Terrazza"
                 value={newZoneName}
                 onChange={(e) => setNewZoneName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-sky-400"
+                className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white"
               />
             </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs text-slate-400">Posizione X (metri):</label>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-[11px] text-zinc-400 block mb-1">Largh. (metri):</label>
                 <input
                   type="number"
-                  min={0}
-                  max={TOTAL_FLOOR_METERS - 2}
-                  value={newZoneX}
-                  onChange={(e) => setNewZoneX(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-slate-400">Posizione Y (metri):</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={TOTAL_FLOOR_METERS - 2}
-                  value={newZoneY}
-                  onChange={(e) => setNewZoneY(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs text-slate-400">Larghezza (metri):</label>
-                <input
-                  type="number"
-                  min={2}
-                  max={TOTAL_FLOOR_METERS}
+                  min="2"
+                  max="18"
                   value={newZoneWidth}
                   onChange={(e) => setNewZoneWidth(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs text-slate-400">Altezza (metri):</label>
+              <div>
+                <label className="text-[11px] text-zinc-400 block mb-1">Altezza (metri):</label>
                 <input
                   type="number"
-                  min={2}
-                  max={TOTAL_FLOOR_METERS}
+                  min="2"
+                  max="18"
                   value={newZoneHeight}
                   onChange={(e) => setNewZoneHeight(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg p-2 text-xs text-white font-mono"
                 />
               </div>
             </div>
-
-            <div className="space-y-1">
-              <label className="text-xs text-slate-400">Colore Identificativo Zona:</label>
-              <div className="flex space-x-2">
-                {['#ea580c', '#0284c7', '#10b981', '#8b5cf6', '#ec4899', '#eab308'].map(color => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => setNewZoneColor(color)}
-                    style={{ backgroundColor: color }}
-                    className={`w-7 h-7 rounded-lg transition-transform ${
-                      newZoneColor === color ? 'scale-110 ring-2 ring-white' : 'opacity-70 hover:opacity-100'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowNewZoneModal(false)}
-                className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold"
-              >
-                Annulla
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold"
-              >
-                Inserisci nella Planimetria
-              </button>
-            </div>
+            <button type="submit" className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl">
+              Crea Zona
+            </button>
           </form>
         </div>
       )}
