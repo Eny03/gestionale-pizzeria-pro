@@ -6,6 +6,7 @@ import { MenuItem, Order, OrderItem } from '../../../shared/types';
 export const AsportoView: React.FC = () => {
   const { menuItems, orders, currentUser, createOrder, updateItemPhase } = useApp();
 
+  const [activeMobileTab, setActiveMobileTab] = useState<'NUOVO' | 'MONITOR'>('NUOVO');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [pickupTime, setPickupTime] = useState('20:45');
@@ -15,6 +16,10 @@ export const AsportoView: React.FC = () => {
   const takeawayOrders = orders.filter(
     o => (o.type === 'TAKEAWAY' || o.type === 'DELIVERY') && o.status !== 'COMPLETATO' && o.status !== 'PAGATO'
   );
+
+  const setPresetTime = (time: string) => {
+    setPickupTime(time);
+  };
 
   const addItemToCart = (item: MenuItem) => {
     setCartItems(prev => {
@@ -107,163 +112,223 @@ export const AsportoView: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row bg-slate-950 text-slate-100 overflow-hidden">
-      {/* SEZIONE SINISTRA: NUOVO ORDINE ASPORTO / TELEFONICO */}
-      <div className="w-full lg:w-1/2 flex flex-col border-r border-slate-800 overflow-hidden">
-        <div className="p-4 bg-slate-900 border-b border-slate-800">
-          <h2 className="text-base font-extrabold text-white flex items-center space-x-2">
-            <ShoppingBag className="w-4 h-4 text-indigo-400" />
-            <span>Nuovo Ordine Asporto & Delivery</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Inserisci l'orario di ritiro: il Cron Job differito invierà i ticket ai reparti al momento esatto.
-          </p>
+    <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
+      {/* HEADER COMPATTO CON SWITCHER MOBILE */}
+      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-slate-900/60 border-b border-slate-800/80 flex items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <ShoppingBag className="w-4 h-4" />
+          </div>
+          <div>
+            <h1 className="text-xs sm:text-sm font-extrabold text-white flex items-center space-x-1.5">
+              <span>Asporto & Delivery</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                Cron Dispatch
+              </span>
+            </h1>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmitTakeaway} className="flex-1 flex flex-col justify-between overflow-hidden p-4 space-y-4">
-          <div className="space-y-4 overflow-y-auto pr-1">
-            {/* Dati cliente & Orario ritiro */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-              <div>
-                <label className="text-[11px] font-bold text-slate-400 block mb-1">Nome Cliente:</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Es. Mario Rossi"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-indigo-400"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-slate-400 block mb-1">Telefono:</label>
-                <input
-                  type="tel"
-                  placeholder="+39 347..."
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-indigo-400"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-indigo-400 block mb-1">Orario Ritiro Previsto:</label>
-                <input
-                  type="time"
-                  required
-                  value={pickupTime}
-                  onChange={(e) => setPickupTime(e.target.value)}
-                  className="w-full bg-slate-800 border border-indigo-500/50 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-indigo-400 font-mono font-bold"
-                />
-              </div>
-            </div>
+        {/* Tab Switcher per Mobile / Tablet */}
+        <div className="flex lg:hidden items-center space-x-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+          <button
+            onClick={() => setActiveMobileTab('NUOVO')}
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1 transition-all text-xs ${
+              activeMobileTab === 'NUOVO'
+                ? 'bg-indigo-500 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Nuovo</span>
+          </button>
+          <button
+            onClick={() => setActiveMobileTab('MONITOR')}
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
+              activeMobileTab === 'MONITOR'
+                ? 'bg-amber-500 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Attivi</span>
+            <span className="px-1.5 rounded bg-slate-950/60 text-white font-mono text-[10px]">
+              {takeawayOrders.length}
+            </span>
+          </button>
+        </div>
+      </div>
 
-            {/* Selezione Prodotti Menu */}
-            <div>
-              <label className="text-xs font-bold text-slate-300 block mb-2">
-                Aggiungi Prodotti all'Ordine:
-              </label>
-              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
-                {menuItems.map(item => (
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        {/* SEZIONE SINISTRA: NUOVO ORDINE ASPORTO / TELEFONICO */}
+        <div className={`w-full lg:w-1/2 flex flex-col border-r border-slate-800 overflow-hidden ${
+          activeMobileTab === 'NUOVO' ? 'flex' : 'hidden lg:flex'
+        }`}>
+          <div className="p-3 bg-slate-900/40 border-b border-slate-800 hidden lg:block">
+            <h2 className="text-xs font-bold text-slate-300">
+              Registrazione Ordine con Cron Job Differito
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmitTakeaway} className="flex-1 flex flex-col justify-between overflow-hidden p-3 sm:p-4 space-y-3">
+            <div className="space-y-3 overflow-y-auto pr-1">
+              {/* Dati cliente & Orario ritiro */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 block mb-1">Nome Cliente:</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Mario Rossi"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-indigo-400"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 block mb-1">Telefono:</label>
+                  <input
+                    type="tel"
+                    placeholder="+39 347..."
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-indigo-400"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-indigo-400 block mb-1">Orario Ritiro:</label>
+                  <input
+                    type="time"
+                    required
+                    value={pickupTime}
+                    onChange={(e) => setPickupTime(e.target.value)}
+                    className="w-full bg-slate-800 border border-indigo-500/50 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-indigo-400 font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              {/* Tasti Rapidi Orari per Touch */}
+              <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 text-[11px]">
+                <span className="text-slate-500 text-[10px] shrink-0">Orari rapidi:</span>
+                {['19:30', '20:00', '20:30', '21:00', '21:30'].map(t => (
                   <button
-                    key={item.id}
+                    key={t}
                     type="button"
-                    onClick={() => addItemToCart(item)}
-                    className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-left flex items-center justify-between text-xs transition-colors"
+                    onClick={() => setPresetTime(t)}
+                    className={`px-2 py-1 rounded-md font-mono text-[11px] font-bold border transition-colors shrink-0 ${
+                      pickupTime === t
+                        ? 'bg-indigo-500 text-white border-indigo-400'
+                        : 'bg-slate-850 text-slate-300 border-slate-750 hover:bg-slate-800'
+                    }`}
                   >
-                    <div className="truncate mr-2">
-                      <div className="font-bold text-slate-200 truncate">{item.name}</div>
-                      <span className="text-[10px] text-slate-400">{item.prepTimeMinutes}m prep • {item.targetDepartment}</span>
-                    </div>
-                    <span className="font-mono text-emerald-400 font-bold shrink-0">€{item.price.toFixed(2)}</span>
+                    {t}
                   </button>
                 ))}
               </div>
-            </div>
 
-            {/* Carrello Asporto */}
-            <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
-                Riepilogo Ordine ({cartItems.length} voci):
-              </label>
-              <div className="bg-slate-900/60 rounded-xl border border-slate-800 p-2.5 max-h-36 overflow-y-auto space-y-1.5">
-                {cartItems.length === 0 ? (
-                  <span className="text-xs text-slate-500 italic block text-center py-2">
-                    Nessun articolo selezionato. Clicca sui prodotti sopra per aggiungerli.
-                  </span>
-                ) : (
-                  cartItems.map(({ menuItem, quantity }) => (
-                    <div key={menuItem.id} className="flex items-center justify-between text-xs bg-slate-800/60 p-1.5 rounded-lg">
-                      <span className="font-semibold text-slate-200 truncate">{menuItem.name}</span>
-                      <div className="flex items-center space-x-2 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(menuItem.id, -1)}
-                          className="w-5 h-5 bg-slate-700 rounded text-center text-white"
-                        >
-                          -
-                        </button>
-                        <span className="font-bold text-white w-4 text-center">{quantity}</span>
-                        <button
-                          type="button"
-                          onClick={() => updateQuantity(menuItem.id, 1)}
-                          className="w-5 h-5 bg-slate-700 rounded text-center text-white"
-                        >
-                          +
-                        </button>
-                        <span className="font-mono text-emerald-400 w-14 text-right">
-                          €{(menuItem.price * quantity).toFixed(2)}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(menuItem.id)}
-                          className="text-slate-500 hover:text-rose-400 ml-1"
-                        >
-                          ✕
-                        </button>
+              {/* Selezione Prodotti Menu */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                  Aggiungi Prodotti all'Ordine:
+                </label>
+                <div className="grid grid-cols-2 gap-2 max-h-44 overflow-y-auto pr-1">
+                  {menuItems.map(item => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => addItemToCart(item)}
+                      className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-left flex items-center justify-between text-xs transition-colors"
+                    >
+                      <div className="truncate mr-2">
+                        <div className="font-bold text-slate-200 truncate">{item.name}</div>
+                        <span className="text-[10px] text-slate-400">{item.prepTimeMinutes}m • {item.targetDepartment}</span>
                       </div>
-                    </div>
-                  ))
-                )}
+                      <span className="font-mono text-emerald-400 font-bold shrink-0">€{item.price.toFixed(2)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Carrello Asporto */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  Riepilogo Ordine ({cartItems.length} voci):
+                </label>
+                <div className="bg-slate-900/60 rounded-xl border border-slate-800 p-2.5 max-h-36 overflow-y-auto space-y-1.5">
+                  {cartItems.length === 0 ? (
+                    <span className="text-xs text-slate-500 italic block text-center py-2">
+                      Nessun articolo selezionato. Tocca un prodotto sopra per aggiungerlo.
+                    </span>
+                  ) : (
+                    cartItems.map(({ menuItem, quantity }) => (
+                      <div key={menuItem.id} className="flex items-center justify-between text-xs bg-slate-800/60 p-1.5 rounded-lg">
+                        <span className="font-semibold text-slate-200 truncate">{menuItem.name}</span>
+                        <div className="flex items-center space-x-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(menuItem.id, -1)}
+                            className="w-5 h-5 bg-slate-700 rounded text-center text-white"
+                          >
+                            -
+                          </button>
+                          <span className="font-bold text-white w-4 text-center">{quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(menuItem.id, 1)}
+                            className="w-5 h-5 bg-slate-700 rounded text-center text-white"
+                          >
+                            +
+                          </button>
+                          <span className="font-mono text-emerald-400 w-14 text-right">
+                            €{(menuItem.price * quantity).toFixed(2)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(menuItem.id)}
+                            className="text-slate-500 hover:text-rose-400 ml-1"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Footer Invio */}
-          <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-            <div>
-              <span className="text-xs text-slate-400 block">Totale Ordine:</span>
-              <span className="text-lg font-black text-emerald-400 font-mono">€ {totalAmount.toFixed(2)}</span>
+            {/* Footer Invio */}
+            <div className="pt-2.5 border-t border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] text-slate-400 block">Totale:</span>
+                <span className="text-base font-black text-emerald-400 font-mono">€ {totalAmount.toFixed(2)}</span>
+              </div>
+              <button
+                type="submit"
+                disabled={cartItems.length === 0 || !customerName}
+                className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-md shadow-indigo-500/25 disabled:opacity-50 transition-all flex items-center space-x-2"
+              >
+                <Clock className="w-4 h-4" />
+                <span>Registra Asporto</span>
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={cartItems.length === 0 || !customerName}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-extrabold text-xs shadow-lg shadow-indigo-500/25 disabled:opacity-50 transition-all flex items-center space-x-2"
-            >
-              <Clock className="w-4 h-4" />
-              <span>REGISTRA ASPORTO CON CRON SCHEDULER</span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* SEZIONE DESTRA: MONITOR ORDINI ASPORTO & SCHEDULER CRON */}
-      <div className="w-full lg:w-1/2 flex flex-col overflow-hidden">
-        <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-extrabold text-white flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-amber-400" />
-              <span>Monitor Cron Job Ordini Asporto</span>
-            </h2>
-            <p className="text-xs text-slate-400">
-              Tracciamento in tempo reale degli ordini differiti e rilasci automatici
-            </p>
-          </div>
-          <span className="px-2.5 py-1 rounded-full bg-slate-800 text-indigo-400 font-mono text-xs font-bold border border-slate-700">
-            {takeawayOrders.length} attivi
-          </span>
+          </form>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {/* SEZIONE DESTRA: MONITOR ORDINI ASPORTO & SCHEDULER CRON */}
+        <div className={`w-full lg:w-1/2 flex flex-col overflow-hidden ${
+          activeMobileTab === 'MONITOR' ? 'flex' : 'hidden lg:flex'
+        }`}>
+          <div className="p-3 bg-slate-900/40 border-b border-slate-800 flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-300">
+              Ordini Programmati & In Lavorazione
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-slate-850 text-indigo-400 font-mono text-[11px] font-bold border border-slate-750">
+              {takeawayOrders.length} attivi
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {takeawayOrders.length === 0 ? (
             <div className="h-72 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-2xl text-slate-500 text-center p-6">
               <ShoppingBag className="w-12 h-12 stroke-1 text-slate-700 mb-2" />
@@ -360,5 +425,6 @@ export const AsportoView: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

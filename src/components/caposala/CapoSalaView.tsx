@@ -71,7 +71,7 @@ export const CapoSalaView: React.FC = () => {
 
   const tavolataTotalSeats = tavolataMembers.reduce((sum, t) => sum + t.seats, 0);
 
-  // Gestione Drag & Drop sulla griglia 1m x 1m (snap esatto al metro)
+  // Gestione Drag & Drop sulla griglia 1m x 1m (snap esatto al metro con supporto Touch & Mouse)
   const handleMouseDownTable = (e: React.MouseEvent, table: RestaurantTable) => {
     e.stopPropagation();
     setSelectedTableId(table.id);
@@ -88,6 +88,22 @@ export const CapoSalaView: React.FC = () => {
     }
   };
 
+  const handleTouchStartTable = (e: React.TouchEvent, table: RestaurantTable) => {
+    e.stopPropagation();
+    setSelectedTableId(table.id);
+    setDraggingTableId(table.id);
+
+    if (gridContainerRef.current && e.touches[0]) {
+      const rect = gridContainerRef.current.getBoundingClientRect();
+      const clickXInMeters = (e.touches[0].clientX - rect.left) / zoomLevel;
+      const clickYInMeters = (e.touches[0].clientY - rect.top) / zoomLevel;
+      setDragOffset({
+        x: clickXInMeters - table.x,
+        y: clickYInMeters - table.y
+      });
+    }
+  };
+
   const handleMouseMoveGrid = (e: React.MouseEvent) => {
     if (!draggingTableId || !gridContainerRef.current) return;
 
@@ -95,7 +111,6 @@ export const CapoSalaView: React.FC = () => {
     const rawXInMeters = (e.clientX - rect.left) / zoomLevel - dragOffset.x;
     const rawYInMeters = (e.clientY - rect.top) / zoomLevel - dragOffset.y;
 
-    // SNAP AL METRO ESATTO (oppure mezzo metro per allineamento perfetto)
     const snappedX = Math.round(rawXInMeters);
     const snappedY = Math.round(rawYInMeters);
 
@@ -112,7 +127,30 @@ export const CapoSalaView: React.FC = () => {
     }
   };
 
-  const handleMouseUpGrid = () => {
+  const handleTouchMoveGrid = (e: React.TouchEvent) => {
+    if (!draggingTableId || !gridContainerRef.current || !e.touches[0]) return;
+
+    const rect = gridContainerRef.current.getBoundingClientRect();
+    const rawXInMeters = (e.touches[0].clientX - rect.left) / zoomLevel - dragOffset.x;
+    const rawYInMeters = (e.touches[0].clientY - rect.top) / zoomLevel - dragOffset.y;
+
+    const snappedX = Math.round(rawXInMeters);
+    const snappedY = Math.round(rawYInMeters);
+
+    const clampedX = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, snappedX));
+    const clampedY = Math.max(0, Math.min(TOTAL_FLOOR_METERS - 1, snappedY));
+
+    const currentTable = tables.find(t => t.id === draggingTableId);
+    if (currentTable && (currentTable.x !== clampedX || currentTable.y !== clampedY)) {
+      updateTable({
+        ...currentTable,
+        x: clampedX,
+        y: clampedY
+      });
+    }
+  };
+
+  const handleEndDrag = () => {
     setDraggingTableId(null);
   };
 
@@ -278,9 +316,11 @@ export const CapoSalaView: React.FC = () => {
 
         {/* CONTAINER CANVAS METRICO INTERATTIVO */}
         <div
-          className="flex-1 overflow-auto p-6 bg-slate-950 flex items-center justify-center relative cursor-crosshair"
+          className="flex-1 overflow-auto p-4 sm:p-6 bg-slate-950 flex items-center justify-center relative cursor-crosshair touch-none"
           onMouseMove={handleMouseMoveGrid}
-          onMouseUp={handleMouseUpGrid}
+          onMouseUp={handleEndDrag}
+          onTouchMove={handleTouchMoveGrid}
+          onTouchEnd={handleEndDrag}
           onClick={() => setSelectedTableId(null)}
         >
           {/* IL GRANDE QUADRATO GLOBALE DEL LOCALE (18m x 18m) */}
@@ -361,6 +401,7 @@ export const CapoSalaView: React.FC = () => {
                 <div
                   key={table.id}
                   onMouseDown={(e) => handleMouseDownTable(e, table)}
+                  onTouchStart={(e) => handleTouchStartTable(e, table)}
                   style={{
                     width: `${tableSizePx}px`,
                     height: `${tableSizePx}px`,
@@ -406,20 +447,36 @@ export const CapoSalaView: React.FC = () => {
         </div>
       </div>
 
-      {/* PANNELLO LATERALE: GESTIONE TAVOLO, TAVOLATA & PRENOTAZIONI */}
-      <div className="w-full lg:w-96 bg-slate-900 border-t lg:border-t-0 border-slate-800 flex flex-col justify-between overflow-y-auto">
-        <div className="p-4 border-b border-slate-800">
-          <h2 className="font-extrabold text-base text-white flex items-center space-x-2">
-            <LayoutGrid className="w-4 h-4 text-orange-400" />
-            <span>Dettaglio Tavolo & Tavolata</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Tavoli 1m x 1m. Affianca o unisci per comporre tavolate per gruppi numerosi.
-          </p>
+      {/* PANNELLO LATERALE (SIDEBAR SU DESKTOP, BOTTOM SHEET SU SMARTPHONE) */}
+      <div
+        className={`${
+          selectedTable
+            ? 'fixed inset-x-0 bottom-0 z-40 max-h-[85vh] lg:relative lg:inset-auto lg:z-auto lg:w-96 rounded-t-3xl lg:rounded-none shadow-2xl lg:shadow-none'
+            : 'hidden lg:flex lg:w-96'
+        } bg-slate-950 lg:bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex-col justify-between overflow-y-auto pb-safe`}
+      >
+        <div className="p-3.5 sm:p-4 border-b border-slate-800 flex items-center justify-between">
+          <div>
+            <h2 className="font-extrabold text-sm sm:text-base text-white flex items-center space-x-1.5">
+              <LayoutGrid className="w-4 h-4 text-orange-400" />
+              <span>{selectedTable ? `Tavolo #${selectedTable.number}` : 'Dettaglio Tavolo'}</span>
+            </h2>
+            <p className="text-[11px] text-slate-400">
+              {selectedTable ? `${selectedTable.seats} persone • ${selectedTable.status}` : 'Tavoli 1m x 1m'}
+            </p>
+          </div>
+          {selectedTable && (
+            <button
+              onClick={() => setSelectedTableId(null)}
+              className="p-1 text-slate-400 hover:text-white"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
         {selectedTable ? (
-          <div className="p-4 space-y-4 flex-1">
+          <div className="p-3.5 sm:p-4 space-y-3.5 flex-1">
             {/* SCHEDA TAVOLO SELEZIONATO */}
             <div className="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700 space-y-3">
               <div className="flex items-center justify-between">

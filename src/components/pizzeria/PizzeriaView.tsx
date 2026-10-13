@@ -52,65 +52,62 @@ export const PizzeriaView: React.FC = () => {
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
-      {/* HEADER REPARTO PIZZERIA: SWITCHER STAZIONI */}
-      <div className="p-4 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400">
-            <Flame className="w-6 h-6" />
+      {/* HEADER REPARTO PIZZERIA: SWITCHER STAZIONI COMPATTO */}
+      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-slate-900/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+            <Flame className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-white flex items-center space-x-2">
-              <span>Frontend Pizzeria KDS</span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30">
-                DOPPIO SCHERMO
+            <h1 className="text-xs sm:text-sm font-extrabold text-white flex items-center space-x-1.5">
+              <span>Pizzeria KDS</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                Live
               </span>
             </h1>
-            <p className="text-xs text-slate-400">
-              Gestione sincronizzata Pre-Cottura, Post-Cottura & Tracking Scorte Linea
-            </p>
           </div>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center space-x-2 bg-slate-800 p-1 rounded-xl border border-slate-700">
+        {/* Tab Switcher Compatto */}
+        <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => setActiveTab('PRE_COTTURA')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-2.5 py-1 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'PRE_COTTURA'
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25'
+                ? 'bg-orange-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>1. PRE-COTTURA (INFORNATA)</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-950/60 text-white font-mono text-[11px]">
+            <span>1. Infornata</span>
+            <span className="px-1.5 rounded bg-slate-950/60 text-white font-mono text-[10px]">
               {preBakePizzas.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('POST_COTTURA')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-2.5 py-1 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'POST_COTTURA'
-                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
+                ? 'bg-emerald-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>2. POST-COTTURA (A CRUDO)</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-950/60 text-white font-mono text-[11px]">
+            <span>2. A Crudo</span>
+            <span className="px-1.5 rounded bg-slate-950/60 text-white font-mono text-[10px]">
               {postBakePizzas.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('SCORTE')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-2.5 py-1 rounded-lg font-bold flex items-center space-x-1 transition-all text-xs ${
               activeTab === 'SCORTE'
-                ? 'bg-sky-500 text-white shadow-md'
+                ? 'bg-sky-500 text-white'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Package className="w-3.5 h-3.5" />
-            <span>SCORTE LINEA</span>
+            <Package className="w-3 h-3" />
+            <span>Scorte</span>
           </button>
         </div>
       </div>

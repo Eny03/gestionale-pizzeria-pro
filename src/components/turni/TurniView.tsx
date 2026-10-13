@@ -76,61 +76,58 @@ export const TurniView: React.FC = () => {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
       {/* HEADER GESTIONE TURNI & HR */}
-      <div className="p-4 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
-            <CalendarDays className="w-6 h-6" />
+      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-slate-900/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+            <CalendarDays className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-white flex items-center space-x-2">
-              <span>Frontend Gestione Turni & HR</span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                FAIR SCHEDULER
+            <h1 className="text-xs sm:text-sm font-extrabold text-white flex items-center space-x-1.5">
+              <span>Gestione Turni HR</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                Fair Scheduler
               </span>
             </h1>
-            <p className="text-xs text-slate-400">
-              Disponibilità dipendenti, fabbisogno manager & algoritmo di assegnazione equa dei weekend
-            </p>
           </div>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center space-x-2 bg-slate-800 p-1 rounded-xl border border-slate-700">
+        {/* Tab Switcher Compatto */}
+        <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => setActiveTab('DIPENDENTI')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'DIPENDENTI'
-                ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/25'
+                ? 'bg-cyan-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <UserCheck className="w-3.5 h-3.5" />
-            <span>1. INTERFACCIA DIPENDENTI</span>
+            <span>Disponibilità</span>
           </button>
 
           <button
             onClick={() => setActiveTab('MANAGER')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'MANAGER'
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25'
+                ? 'bg-orange-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>2. MANAGER & ALGORITMO</span>
+            <span>Fabbisogno</span>
           </button>
 
           <button
             onClick={() => setActiveTab('ROSTER')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'ROSTER'
-                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
+                ? 'bg-emerald-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
-            <span>3. ROSTER PIANIFICATO</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-950/60 text-white font-mono text-[11px]">
+            <span>Roster</span>
+            <span className="px-1.5 rounded bg-slate-950/60 text-white font-mono text-[10px]">
               {shiftAssignments.length}
             </span>
           </button>
@@ -170,8 +167,8 @@ export const TurniView: React.FC = () => {
             </div>
 
             {/* Matrice Date & Turni per il dipendente selezionato */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-              <table className="w-full text-left text-xs">
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto shadow-xl">
+              <table className="w-full text-left text-xs min-w-[520px]">
                 <thead className="bg-slate-800/80 text-slate-400 uppercase font-bold text-[11px] border-b border-slate-750">
                   <tr>
                     <th className="p-3.5">Data del Servizio</th>
@@ -314,7 +311,7 @@ export const TurniView: React.FC = () => {
             )}
 
             {/* Tabella Fabbisogno Giornaliero Manager */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl space-y-4 p-4">
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto shadow-xl space-y-4 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-black text-white">Fabbisogno Personale per Giorno & Turno</h3>
@@ -322,7 +319,7 @@ export const TurniView: React.FC = () => {
                 </div>
               </div>
 
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-xs min-w-[550px]">
                 <thead className="bg-slate-800/80 text-slate-400 uppercase font-bold text-[11px] border-b border-slate-750">
                   <tr>
                     <th className="p-3">Data</th>

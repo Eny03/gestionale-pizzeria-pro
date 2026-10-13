@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserRole } from '../../../shared/types';
 import {
@@ -10,69 +10,114 @@ import {
   ShoppingBag,
   CalendarDays,
   ShieldCheck,
-  Wifi,
-  WifiOff,
+  ChevronDown,
   UserCheck
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { currentRole, setCurrentRole, currentUser, setCurrentUser, staff, isConnected, orders } = useApp();
+  const [showRoleMenu, setShowRoleMenu] = useState(false);
 
   const activeOrdersCount = orders.filter(o => o.status === 'ATTIVO' || o.status === 'IN_CORSO').length;
 
-  const roles: { role: UserRole; label: string; icon: React.ReactNode; color: string }[] = [
-    { role: 'CAMERIERE', label: 'Cameriere', icon: <UtensilsCrossed className="w-4 h-4" />, color: 'hover:bg-amber-600/30' },
-    { role: 'CAPO_SALA', label: 'Capo Sala', icon: <LayoutGrid className="w-4 h-4" />, color: 'hover:bg-sky-600/30' },
-    { role: 'PIZZERIA', label: 'Pizzeria', icon: <Flame className="w-4 h-4" />, color: 'hover:bg-red-600/30' },
-    { role: 'CUCINA', label: 'Cucina', icon: <ChefHat className="w-4 h-4" />, color: 'hover:bg-emerald-600/30' },
-    { role: 'BAR', label: 'Bar', icon: <Wine className="w-4 h-4" />, color: 'hover:bg-purple-600/30' },
-    { role: 'ASPORTO', label: 'Asporto', icon: <ShoppingBag className="w-4 h-4" />, color: 'hover:bg-indigo-600/30' },
-    { role: 'TURNI', label: 'Turni HR', icon: <CalendarDays className="w-4 h-4" />, color: 'hover:bg-cyan-600/30' },
-    { role: 'ADMIN', label: 'Admin / Cassa', icon: <ShieldCheck className="w-4 h-4" />, color: 'hover:bg-rose-600/30' },
+  const roles: { role: UserRole; label: string; icon: React.ReactNode }[] = [
+    { role: 'CAMERIERE', label: 'Cameriere', icon: <UtensilsCrossed className="w-3.5 h-3.5" /> },
+    { role: 'CAPO_SALA', label: 'Capo Sala', icon: <LayoutGrid className="w-3.5 h-3.5" /> },
+    { role: 'PIZZERIA', label: 'Pizzeria', icon: <Flame className="w-3.5 h-3.5" /> },
+    { role: 'CUCINA', label: 'Cucina', icon: <ChefHat className="w-3.5 h-3.5" /> },
+    { role: 'BAR', label: 'Bar', icon: <Wine className="w-3.5 h-3.5" /> },
+    { role: 'ASPORTO', label: 'Asporto', icon: <ShoppingBag className="w-3.5 h-3.5" /> },
+    { role: 'TURNI', label: 'Turni HR', icon: <CalendarDays className="w-3.5 h-3.5" /> },
+    { role: 'ADMIN', label: 'Cassa / Admin', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
   ];
 
+  const currentRoleObj = roles.find(r => r.role === currentRole) || roles[0];
+
   return (
-    <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 select-none shadow-lg">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand & Connection */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-md shadow-orange-500/20 text-white font-black text-xl">
+    <header className="bg-slate-950/90 backdrop-blur-md border-b border-slate-800/60 sticky top-0 z-40 select-none">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
+          {/* Logo Minimale & Sync */}
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-base">
               🍕
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-orange-400 via-amber-200 to-white bg-clip-text text-transparent">
-                  Pizzeria Smart Pro
+              <div className="flex items-center space-x-1.5">
+                <span className="font-extrabold text-sm sm:text-base tracking-tight text-white">
+                  Pizzeria Pro
                 </span>
-                <span className="hidden md:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                  REAL-TIME RBAC
-                </span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
+                  }`}
+                  title={isConnected ? 'Sincronizzato' : 'Offline'}
+                />
               </div>
-              <div className="flex items-center space-x-2 text-xs text-slate-400">
-                <span className="flex items-center space-x-1">
-                  {isConnected ? (
-                    <>
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      <span className="text-emerald-400 font-medium">Live Sync</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                      <span className="text-rose-400 font-medium">Offline</span>
-                    </>
-                  )}
-                </span>
-                <span>•</span>
-                <span>{activeOrdersCount} comande attive</span>
+              <div className="text-[10px] text-slate-400 -mt-0.5">
+                {activeOrdersCount} comande attive
               </div>
             </div>
           </div>
 
-          {/* Active Waiter / Staff Switcher */}
-          <div className="hidden lg:flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-xs">
-            <UserCheck className="w-4 h-4 text-orange-400" />
-            <span className="text-slate-400">Operatore:</span>
+          {/* Selettore Ruolo Mobile (Compatto Dropdown) */}
+          <div className="relative md:hidden">
+            <button
+              onClick={() => setShowRoleMenu(!showRoleMenu)}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-200 active:scale-95 transition-transform"
+            >
+              <span className="text-orange-400">{currentRoleObj.icon}</span>
+              <span>{currentRoleObj.label}</span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
+            </button>
+
+            {showRoleMenu && (
+              <div className="absolute right-0 top-11 w-44 bg-slate-900 border border-slate-800 rounded-xl p-1.5 shadow-2xl z-50 divide-y divide-slate-800/40">
+                {roles.map(r => (
+                  <button
+                    key={r.role}
+                    onClick={() => {
+                      setCurrentRole(r.role);
+                      setShowRoleMenu(false);
+                    }}
+                    className={`w-full flex items-center space-x-2 px-2.5 py-2 rounded-lg text-xs font-medium text-left transition-colors ${
+                      currentRole === r.role
+                        ? 'bg-orange-500 text-white font-bold'
+                        : 'text-slate-300 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>{r.icon}</span>
+                    <span>{r.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop / Tablet Segments Menu (Pulito e Minimale) */}
+          <nav className="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800/80">
+            {roles.map((r) => {
+              const isActive = currentRole === r.role;
+              return (
+                <button
+                  key={r.role}
+                  onClick={() => setCurrentRole(r.role)}
+                  className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    isActive
+                      ? 'bg-orange-500 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  }`}
+                >
+                  {r.icon}
+                  <span>{r.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Operatore (Minimale) */}
+          <div className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-400 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-800">
+            <UserCheck className="w-3.5 h-3.5 text-orange-400" />
             <select
               value={currentUser.id}
               onChange={(e) => {
@@ -89,33 +134,11 @@ export const Navbar: React.FC = () => {
             >
               {staff.map(s => (
                 <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">
-                  {s.name} ({s.role})
+                  {s.name}
                 </option>
               ))}
             </select>
           </div>
-
-          {/* Role Switcher Pill Ribbon */}
-          <nav className="flex items-center space-x-1 overflow-x-auto py-1 max-w-[55vw] lg:max-w-none">
-            {roles.map((r) => {
-              const isActive = currentRole === r.role;
-              return (
-                <button
-                  key={r.role}
-                  onClick={() => setCurrentRole(r.role)}
-                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap ${
-                    isActive
-                      ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25 ring-1 ring-orange-400'
-                      : `text-slate-400 bg-slate-800/60 hover:text-slate-200 ${r.color} border border-slate-700/40`
-                  }`}
-                  title={`Passa alla vista ${r.label}`}
-                >
-                  {r.icon}
-                  <span className="hidden sm:inline">{r.label}</span>
-                </button>
-              );
-            })}
-          </nav>
         </div>
       </div>
     </header>

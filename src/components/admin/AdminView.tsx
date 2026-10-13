@@ -127,63 +127,60 @@ export const AdminView: React.FC = () => {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
       {/* HEADER AMMINISTRAZIONE */}
-      <div className="p-4 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
-            <ShieldCheck className="w-6 h-6" />
+      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-slate-900/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+            <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-white flex items-center space-x-2">
-              <span>Frontend Proprietario & Admin</span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                FULL ACCESS
+            <h1 className="text-xs sm:text-sm font-extrabold text-white flex items-center space-x-1.5">
+              <span>Cassa & Gestione</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                POS
               </span>
             </h1>
-            <p className="text-xs text-slate-400">
-              Cassa veloce con scontrino in tempo reale, Gestione Menu & Override manuale turni
-            </p>
           </div>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center space-x-2 bg-slate-800 p-1 rounded-xl border border-slate-700">
+        {/* Tab Switcher Compatto */}
+        <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => setActiveTab('CASSA')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'CASSA'
-                ? 'bg-rose-500 text-white shadow-md shadow-rose-500/25'
+                ? 'bg-rose-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <CreditCard className="w-3.5 h-3.5" />
-            <span>1. CASSA VELOCE (POS)</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-950/60 text-white font-mono text-[11px]">
+            <span>Cassa</span>
+            <span className="px-1.5 rounded bg-slate-950/60 text-white font-mono text-[10px]">
               {unpaidOrders.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('MENU')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'MENU'
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25'
+                ? 'bg-orange-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Utensils className="w-3.5 h-3.5" />
-            <span>2. GESTIONE MENU</span>
+            <span>Menu</span>
           </button>
 
           <button
             onClick={() => setActiveTab('OVERRIDE')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'OVERRIDE'
-                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/25'
+                ? 'bg-amber-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>3. OVERRIDE TURNI</span>
+            <span>Turni</span>
           </button>
         </div>
       </div>
@@ -254,19 +251,23 @@ export const AdminView: React.FC = () => {
               )}
             </div>
 
-            {/* Dettaglio Scontrino & Pagamento Rapido POS */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl">
+            {/* Dettaglio Scontrino & Pagamento Rapido POS (Desktop Sidebar) */}
+            <div className="hidden lg:flex bg-slate-900 border border-slate-800 rounded-2xl p-5 flex-col justify-between shadow-xl">
               {selectedTableOrder ? (
                 <div className="flex-1 flex flex-col justify-between space-y-4">
                   <div>
                     <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <div>
-                        <h3 className="font-black text-base text-white">Dettaglio Conto {selectedTableOrder.tableName}</h3>
+                        <h3 className="font-black text-base text-white">Dettaglio {selectedTableOrder.tableName}</h3>
                         <p className="text-xs text-slate-400 font-mono">Codice: {selectedTableOrder.code}</p>
                       </div>
-                      <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
-                        In Attesa Pagamento
-                      </span>
+                      <button
+                        onClick={() => setSelectedTableOrder(null)}
+                        className="text-slate-400 hover:text-white p-1 rounded-lg"
+                        title="Deseleziona tavolo"
+                      >
+                        ✕
+                      </button>
                     </div>
 
                     {/* Voci Scontrino */}
@@ -339,7 +340,7 @@ export const AdminView: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2 pt-1">
                       <button
                         onClick={() => handleCheckout('CONTANTI')}
-                        className="py-3 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-600/20"
+                        className="py-3 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
                       >
                         <DollarSign className="w-4 h-4" />
                         <span>CONTANTI</span>
@@ -347,7 +348,7 @@ export const AdminView: React.FC = () => {
 
                       <button
                         onClick={() => handleCheckout('CARTA')}
-                        className="py-3 px-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-sky-600/20"
+                        className="py-3 px-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-sky-600/20 active:scale-95 transition-all"
                       >
                         <CreditCard className="w-4 h-4" />
                         <span>POS / CARTA</span>
@@ -358,13 +359,115 @@ export const AdminView: React.FC = () => {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500">
                   <CreditCard className="w-12 h-12 stroke-1 text-slate-700 mb-2" />
-                  <p className="text-sm font-semibold">Seleziona un tavolo dal riquadro a sinistra</p>
+                  <p className="text-sm font-semibold">Seleziona un tavolo</p>
                   <p className="text-xs text-slate-500 mt-1">
-                    Visualizzerai lo scontrino completo con il calcolo automatico per incassare immediatamente.
+                    Visualizzerai lo scontrino per incassare immediatamente.
                   </p>
                 </div>
               )}
             </div>
+
+            {/* Mobile / Tablet Bottom Sheet Drawer Pagamento */}
+            {selectedTableOrder && (
+              <div className="lg:hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex flex-col justify-end p-2 sm:p-4">
+                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 max-w-lg w-full mx-auto space-y-3.5 shadow-2xl animate-in slide-in-from-bottom duration-200">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div>
+                      <h3 className="font-black text-base text-white">Conto {selectedTableOrder.tableName}</h3>
+                      <p className="text-xs text-slate-400 font-mono">Codice: {selectedTableOrder.code}</p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedTableOrder(null)}
+                      className="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold hover:bg-slate-700"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Voci Scontrino */}
+                  <div className="max-h-52 overflow-y-auto py-1 space-y-2 text-xs divide-y divide-slate-800/60">
+                    {selectedTableOrder.items.map(item => (
+                      <div key={item.id} className="pt-1.5 first:pt-0 flex justify-between">
+                        <div>
+                          <div className="font-bold text-white">
+                            {item.quantity}x {item.name}
+                          </div>
+                          {item.customization.addedIngredients.map(add => (
+                            <div key={add.ingredientId} className="text-[11px] text-emerald-400">
+                              + {add.name} (+€{add.priceDelta.toFixed(2)})
+                            </div>
+                          ))}
+                          {item.customization.removedIngredients.map(rem => (
+                            <div key={rem.ingredientId} className="text-[11px] text-rose-400 line-through">
+                              - {rem.name}
+                            </div>
+                          ))}
+                        </div>
+                        <span className="font-mono font-bold text-slate-200">
+                          € {item.subtotal.toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                    {selectedTableOrder.coverCharge > 0 && (
+                      <div className="pt-1.5 flex justify-between text-slate-400">
+                        <span>Coperto ({selectedTableOrder.guestsCount || 2} pers.)</span>
+                        <span className="font-mono text-slate-200">
+                          € {selectedTableOrder.coverCharge.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Totale & Azioni */}
+                  <div className="space-y-2.5 pt-2 border-t border-slate-800">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-400">TOTALE DA INCASSARE:</span>
+                      <span className="text-2xl font-black text-emerald-400 font-mono">
+                        € {selectedTableOrder.totalAmount.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="bg-slate-800/80 p-2 rounded-xl border border-slate-700 flex items-center justify-between text-xs">
+                      <span className="flex items-center space-x-1 text-slate-300 font-semibold text-[11px]">
+                        <Split className="w-3.5 h-3.5 text-sky-400" />
+                        <span>Romana ({splitGuests} pers):</span>
+                      </span>
+                      <div className="flex items-center space-x-1.5">
+                        <input
+                          type="number"
+                          min={2}
+                          max={20}
+                          value={splitGuests}
+                          onChange={(e) => setSplitGuests(Math.max(2, Number(e.target.value)))}
+                          className="w-10 bg-slate-900 border border-slate-700 text-center rounded p-1 text-white font-mono text-xs"
+                        />
+                        <span className="font-mono font-bold text-emerald-400 text-xs">
+                          € {(selectedTableOrder.totalAmount / splitGuests).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={() => handleCheckout('CONTANTI')}
+                        className="py-3 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                        <span>CONTANTI</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleCheckout('CARTA')}
+                        className="py-3 px-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-sky-600/20 active:scale-95 transition-all"
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        <span>POS / CARTA</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

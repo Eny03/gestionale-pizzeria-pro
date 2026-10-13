@@ -92,54 +92,51 @@ export const CucinaView: React.FC = () => {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
       {/* HEADER REPARTO CUCINA */}
-      <div className="p-4 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
-            <ChefHat className="w-6 h-6" />
+      <div className="px-3 py-2 sm:px-4 sm:py-3 bg-slate-900/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <ChefHat className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-white flex items-center space-x-2">
-              <span>Frontend Cucina & Magazzino</span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                KDS & INVENTORY
+            <h1 className="text-xs sm:text-sm font-extrabold text-white flex items-center space-x-1.5">
+              <span>Cucina & Magazzino</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                KDS
               </span>
             </h1>
-            <p className="text-xs text-slate-400">
-              Comande piatti, ingredienti per pizzeria & Gestione magazzino generale
-            </p>
           </div>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center space-x-2 bg-slate-800 p-1 rounded-xl border border-slate-700">
+        {/* Tab Switcher Compatto */}
+        <div className="flex items-center space-x-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => setActiveTab('COMANDE')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'COMANDE'
-                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
+                ? 'bg-emerald-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <ChefHat className="w-3.5 h-3.5" />
-            <span>COMANDE IN TEMPO REALE</span>
-            <span className="px-2 py-0.5 rounded-full bg-slate-950/60 text-white font-mono text-[11px]">
+            <span>Comande</span>
+            <span className="px-1.5 rounded bg-slate-950/60 text-white font-mono text-[10px]">
               {activeKitchenItems.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('MAGAZZINO')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition-all ${
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs ${
               activeTab === 'MAGAZZINO'
-                ? 'bg-sky-500 text-white shadow-md'
+                ? 'bg-sky-500 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Package className="w-3.5 h-3.5" />
-            <span>MAGAZZINO GENERALE & SCADENZE</span>
+            <span>Magazzino</span>
             {(lowStockCount > 0 || expiringCount > 0) && (
-              <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white font-mono text-[11px]">
-                {lowStockCount + expiringCount} alert
+              <span className="px-1.5 rounded bg-rose-500 text-white font-mono text-[10px]">
+                {lowStockCount + expiringCount}
               </span>
             )}
           </button>
@@ -323,9 +320,62 @@ export const CucinaView: React.FC = () => {
               </div>
             </div>
 
-            {/* Tabella Magazzino Generale */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-              <table className="w-full text-left text-xs">
+            {/* Vista Mobile: Schede Compatte */}
+            <div className="sm:hidden space-y-2.5">
+              {filteredIngredients.map((ing) => {
+                const isLowStock = ing.currentStock <= ing.minThreshold;
+                const isExpiring = ing.expiryDate <= twoDaysLater;
+
+                return (
+                  <div key={ing.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-bold text-white text-xs">{ing.name}</h4>
+                        <span className="text-[10px] text-slate-400 capitalize">{ing.category} • Reparto: {ing.stationTarget}</span>
+                      </div>
+                      {isLowStock ? (
+                        <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[10px] font-black border border-rose-500/30">
+                          ESAURIMENTO
+                        </span>
+                      ) : isExpiring ? (
+                        <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-black border border-amber-500/30">
+                          IN SCADENZA
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
+                          REGOLARE
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-800/60 text-[11px]">
+                      <div>
+                        <span className="text-slate-500 text-[9px] block">Giacenza</span>
+                        <span className={`font-mono font-bold ${isLowStock ? 'text-rose-400' : 'text-emerald-400'}`}>
+                          {ing.currentStock} {ing.unit}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[9px] block">Scadenza</span>
+                        <span className={`font-mono ${isExpiring ? 'text-amber-400 font-bold' : 'text-slate-300'}`}>
+                          {ing.expiryDate}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[9px] block">Lotto</span>
+                        <span className="font-mono text-slate-400 truncate block">
+                          {ing.lotNumber}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Tabella Magazzino Generale per Tablet & Desktop */}
+            <div className="hidden sm:block bg-slate-900 rounded-2xl border border-slate-800 overflow-x-auto shadow-xl">
+              <table className="w-full text-left text-xs min-w-[650px]">
                 <thead className="bg-slate-800/80 text-slate-400 uppercase font-bold text-[11px] border-b border-slate-750">
                   <tr>
                     <th className="p-3.5">Prodotto / Ingrediente</th>
