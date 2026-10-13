@@ -17,4 +17,4 @@ COPY --from=builder /app/tsconfig.json ./
 
 EXPOSE 3001
 ENV PORT=3001
-CMD ["npx", "tsx", "server/index.ts"]
+CMD ["npm", "start"]
