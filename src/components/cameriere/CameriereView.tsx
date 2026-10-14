@@ -28,7 +28,9 @@ import {
   Edit3,
   AlertTriangle,
   ChefHat,
-  Wine
+  Wine,
+  List,
+  LayoutGrid
 } from 'lucide-react';
 
 export const CameriereView: React.FC = () => {
@@ -55,6 +57,8 @@ export const CameriereView: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<MenuCategory | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [guestsCount, setGuestsCount] = useState<number>(2);
+  const [viewLayout, setViewLayout] = useState<'LIST' | 'GRID'>('LIST');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [cartItems, setCartItems] = useState<OrderItem[]>([]);
   const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
   const [editingCartItemId, setEditingCartItemId] = useState<string | null>(null);
@@ -161,6 +165,27 @@ export const CameriereView: React.FC = () => {
       };
       setCartItems(prev => [...prev, orderItem]);
     }
+  };
+
+  const quickRemoveItem = (item: MenuItem) => {
+    triggerHaptic();
+    setCartItems(prev => {
+      // Find the last added simple matching item or any matching item
+      const index = prev.map(ci => ci.menuItemId).lastIndexOf(item.id);
+      if (index === -1) return prev;
+      const target = prev[index];
+      if (target.quantity > 1) {
+        return prev.map((ci, idx) => {
+          if (idx === index) {
+            const qty = ci.quantity - 1;
+            return { ...ci, quantity: qty, subtotal: Number((ci.finalUnitPrice * qty).toFixed(2)) };
+          }
+          return ci;
+        });
+      } else {
+        return prev.filter((_, idx) => idx !== index);
+      }
+    });
   };
 
   const confirmCustomization = () => {
@@ -329,76 +354,149 @@ export const CameriereView: React.FC = () => {
       )}
 
       {/* Main Menu Area */}
-      <div className="flex-1 flex flex-col overflow-hidden pb-14 lg:pb-0">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Controls: Mobile Table Selector & Search */}
-        <div className="px-3 py-2 bg-zinc-900/90 border-b border-zinc-800/80 flex items-center justify-between gap-2 shrink-0">
-          {/* Tactile Table Selector Button */}
-          <div className="flex items-center space-x-1.5 min-w-0">
-            <button
-              onClick={() => {
-                triggerHaptic();
-                setShowTablePicker(true);
-              }}
-              className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-xs font-black text-orange-400 active:scale-95 transition-all truncate min-h-[44px]"
-            >
-              <span>📍</span>
-              <span className="truncate">Tavolo #{selectedTable?.number}</span>
-              {selectedTable?.tavolataName && (
-                <span className="hidden sm:inline text-[10px] text-purple-300 font-mono">
-                  [{selectedTable.tavolataName}]
-                </span>
-              )}
-              <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-            </button>
+        <div className="px-3 py-2 bg-zinc-900/95 border-b border-zinc-800/80 flex flex-col gap-2 shrink-0">
+          <div className="flex items-center justify-between gap-2">
+            {/* Table & Guests Pill */}
+            <div className="flex items-center space-x-1.5 min-w-0">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic();
+                  setShowTablePicker(true);
+                }}
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-xs font-black text-orange-400 active:scale-95 transition-all truncate min-h-[42px]"
+              >
+                <span>📍</span>
+                <span className="truncate">T#{selectedTable?.number}</span>
+                <span className="text-[11px] text-zinc-400 font-mono">({guestsCount}p)</span>
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              </button>
 
-            {/* Stepper Coperti Touch */}
-            <div className="flex items-center bg-zinc-800/90 px-1.5 py-1 rounded-xl border border-zinc-700/70 text-xs min-h-[44px]">
-              <button
-                onClick={() => {
-                  triggerHaptic();
-                  setGuestsCount(Math.max(1, guestsCount - 1));
-                }}
-                className="w-8 h-8 rounded-lg bg-zinc-700 active:bg-zinc-600 text-white font-bold flex items-center justify-center active:scale-90 transition-transform"
-                title="Riduci coperti"
-              >
-                -
-              </button>
-              <div className="flex items-center space-x-1 px-2 font-bold font-mono text-zinc-200 text-xs">
-                <Users className="w-3.5 h-3.5 text-zinc-400" />
-                <span>{guestsCount}</span>
+              {/* Stepper Coperti Touch */}
+              <div className="flex items-center bg-zinc-800/90 px-1 py-0.5 rounded-xl border border-zinc-700/70 text-xs min-h-[42px]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic();
+                    setGuestsCount(Math.max(1, guestsCount - 1));
+                  }}
+                  className="w-7 h-7 rounded-lg bg-zinc-700 active:bg-zinc-600 text-white font-bold flex items-center justify-center active:scale-90 transition-transform"
+                  title="Riduci coperti"
+                >
+                  -
+                </button>
+                <div className="flex items-center space-x-1 px-1.5 font-bold font-mono text-zinc-200 text-xs">
+                  <Users className="w-3 h-3 text-zinc-400" />
+                  <span>{guestsCount}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic();
+                    setGuestsCount(guestsCount + 1);
+                  }}
+                  className="w-7 h-7 rounded-lg bg-zinc-700 active:bg-zinc-600 text-white font-bold flex items-center justify-center active:scale-90 transition-transform"
+                  title="Aumenta coperti"
+                >
+                  +
+                </button>
               </div>
+            </div>
+
+            {/* Quick Actions: View Toggle + Search Toggle (Mobile) or Inline Search (Desktop) */}
+            <div className="flex items-center space-x-1.5 shrink-0">
+              {/* View Layout Toggle */}
+              <div className="flex items-center bg-zinc-950 p-0.5 rounded-xl border border-zinc-800 text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic();
+                    setViewLayout('LIST');
+                  }}
+                  className={`p-2 rounded-lg transition-all ${
+                    viewLayout === 'LIST' ? 'bg-orange-500 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                  }`}
+                  title="Vista Elenco (Mobile-First)"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic();
+                    setViewLayout('GRID');
+                  }}
+                  className={`p-2 rounded-lg transition-all ${
+                    viewLayout === 'GRID' ? 'bg-orange-500 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                  }`}
+                  title="Vista Griglia"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Mobile Search Toggle */}
               <button
-                onClick={() => {
-                  triggerHaptic();
-                  setGuestsCount(guestsCount + 1);
-                }}
-                className="w-8 h-8 rounded-lg bg-zinc-700 active:bg-zinc-600 text-white font-bold flex items-center justify-center active:scale-90 transition-transform"
-                title="Aumenta coperti"
+                type="button"
+                onClick={() => setIsSearchExpanded(prev => !prev)}
+                className={`sm:hidden p-2 rounded-xl border transition-all active:scale-95 ${
+                  isSearchExpanded || searchQuery
+                    ? 'bg-orange-500 text-white border-orange-400'
+                    : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:text-white'
+                }`}
+                title="Cerca pietanza"
               >
-                +
+                <Search className="w-4 h-4" />
               </button>
+
+              {/* Desktop Search Input */}
+              <div className="hidden sm:block relative w-48 shrink-0">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-3 text-zinc-500" />
+                <input
+                  type="text"
+                  placeholder="Cerca pietanza..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-zinc-950 border border-zinc-700/80 rounded-xl pl-8 pr-7 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/80 min-h-[42px]"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-3 text-zinc-400 hover:text-white"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Quick Search Input */}
-          <div className="relative w-36 sm:w-48 shrink-0">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-3 text-zinc-500" />
-            <input
-              type="text"
-              placeholder="Cerca pietanza..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-700/80 rounded-xl pl-8 pr-7 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/80 min-h-[44px]"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-3 text-zinc-400 hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          {/* Expandable Search Input on Mobile */}
+          {(isSearchExpanded || searchQuery) && (
+            <div className="sm:hidden relative w-full pt-1">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-4 text-zinc-500" />
+              <input
+                type="text"
+                autoFocus
+                placeholder="Cerca pizza, piatto o bevanda..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-zinc-950 border border-orange-500/80 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none min-h-[44px]"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-3.5 text-zinc-400 hover:text-white p-1"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Categories Horizontal Scrolling Bar */}
@@ -408,6 +506,7 @@ export const CameriereView: React.FC = () => {
             return (
               <button
                 key={c.key}
+                type="button"
                 onClick={() => {
                   triggerHaptic();
                   setSelectedCategory(c.key);
@@ -425,124 +524,270 @@ export const CameriereView: React.FC = () => {
           })}
         </div>
 
-        {/* Menu Items Grid: Ergonomic Touch Cards */}
-        <div className="flex-1 overflow-y-auto p-2.5 sm:p-4 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3">
-          {filteredMenuItems.map(item => {
-            const countInCart = cartItems
-              .filter(ci => ci.menuItemId === item.id)
-              .reduce((a, b) => a + b.quantity, 0);
+        {/* =====================================================================
+            1. VISTA ELENCO (MOBILE-FIRST 1-COLONNA: ZERO ERRORI, TOUCH AMPIO >= 44PX)
+            ===================================================================== */}
+        {viewLayout === 'LIST' ? (
+          <div className="flex-1 overflow-y-auto p-2.5 sm:p-4 space-y-2.5 pb-36 sm:pb-24">
+            {filteredMenuItems.map(item => {
+              const countInCart = cartItems
+                .filter(ci => ci.menuItemId === item.id)
+                .reduce((a, b) => a + b.quantity, 0);
 
-            const isPizzaItem = item.targetDepartment === 'pizzeria';
-            const isCucinaItem = item.targetDepartment === 'cucina';
+              const isPizzaItem = item.targetDepartment === 'pizzeria';
+              const isCucinaItem = item.targetDepartment === 'cucina';
 
-            return (
-              <div
-                key={item.id}
-                onClick={() => quickAddItem(item)}
-                className={`bg-zinc-900/90 border rounded-2xl p-3 flex flex-col justify-between cursor-pointer transition-all active:scale-[0.98] relative shadow-sm min-h-[145px] ${
-                  countInCart > 0
-                    ? 'border-orange-500 ring-1 ring-orange-500/30 bg-zinc-900'
-                    : 'border-zinc-800/80 hover:border-zinc-700'
-                } ${!item.available ? 'opacity-50 grayscale pointer-events-none' : ''}`}
-              >
-                {/* Quantity Badge */}
-                {countInCart > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-zinc-950">
-                    {countInCart}
-                  </span>
-                )}
+              return (
+                <div
+                  key={item.id}
+                  className={`bg-zinc-900/95 border rounded-2xl p-3 sm:p-4 transition-all shadow-md ${
+                    countInCart > 0
+                      ? 'border-orange-500/80 ring-1 ring-orange-500/30 bg-zinc-900'
+                      : 'border-zinc-800/90 hover:border-zinc-700'
+                  } ${!item.available ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    {/* Left Column: Title, Department badge, Ingredients, Price */}
+                    <div className="flex-1 min-w-0 pr-1">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-black text-sm sm:text-base text-white truncate">
+                          {item.name}
+                        </h3>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold font-mono shrink-0 uppercase border ${
+                          isPizzaItem ? 'bg-orange-500/15 text-orange-400 border-orange-500/30' :
+                          isCucinaItem ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' :
+                          'bg-sky-500/15 text-sky-400 border-sky-500/30'
+                        }`}>
+                          {isPizzaItem ? '🍕 Pizzeria' : isCucinaItem ? '👨‍🍳 Cucina' : '🍺 Bar'}
+                        </span>
+                      </div>
 
-                <div>
-                  <div className="flex items-start justify-between gap-1">
-                    <h3 className="font-extrabold text-xs sm:text-sm text-white line-clamp-2 leading-tight">
-                      {item.name}
-                    </h3>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold shrink-0 uppercase border bg-zinc-950 text-zinc-400 border-zinc-800">
-                      {isPizzaItem ? '🍕 PIZ' : isCucinaItem ? '👨‍🍳 CUC' : '🍺 BAR'}
+                      {/* Elenco Ingredienti con chip reparto */}
+                      {item.recipe && item.recipe.length > 0 ? (
+                        <div className="text-[11px] text-zinc-400 mt-1 leading-snug">
+                          {item.recipe.map((r, i) => (
+                            <span key={r.ingredientId || i}>
+                              <span className="text-zinc-300 font-medium">{r.ingredientName}</span>
+                              {r.sourceDepartment && r.sourceDepartment !== item.targetDepartment && (
+                                <span className="text-[9px] text-amber-400 font-semibold ml-0.5">
+                                  [{r.sourceDepartment === 'cucina' ? 'Cucina' : r.sourceDepartment === 'pizzeria' ? 'Pizzeria' : 'Bar'}]
+                                </span>
+                              )}
+                              {i < item.recipe.length - 1 ? ', ' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      ) : item.description ? (
+                        <p className="text-[11px] text-zinc-400 mt-1 line-clamp-2">{item.description}</p>
+                      ) : null}
+
+                      <div className="mt-1 flex items-center space-x-2">
+                        <span className="font-mono font-black text-sm sm:text-base text-emerald-400">
+                          € {item.price.toFixed(2)}
+                        </span>
+                        {countInCart > 0 && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                            Nel carrello: {countInCart}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right Column / Bottom: Tactile Action Controls */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800/80 shrink-0">
+                      {/* Tasto Personalizza (Amber) */}
+                      <button
+                        type="button"
+                        onClick={(e) => openCustomization(e, item)}
+                        className="flex-1 sm:flex-initial py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center justify-center space-x-1.5 active:scale-95 transition-all border border-amber-500/30 min-h-[44px]"
+                        title="Modifica ingredienti, cottura o note"
+                      >
+                        <Sliders className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Personalizza</span>
+                      </button>
+
+                      {/* Stepper Quantità / Aggiungi Rapido */}
+                      {countInCart === 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => quickAddItem(item)}
+                          className="flex-1 sm:flex-initial py-2 px-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-xs font-black flex items-center justify-center space-x-1.5 active:scale-95 transition-all shadow-md shadow-orange-500/20 min-h-[44px]"
+                          title="Aggiungi rapido"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Aggiungi</span>
+                        </button>
+                      ) : (
+                        <div className="flex items-center bg-zinc-950 p-1 rounded-xl border border-orange-500/40 min-h-[44px]">
+                          <button
+                            type="button"
+                            onClick={() => quickRemoveItem(item)}
+                            className="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-600 text-white font-bold flex items-center justify-center text-sm active:scale-90 transition-transform"
+                            title="Rimuovi uno"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                          <span className="font-mono font-black text-sm text-orange-400 w-8 text-center">
+                            {countInCart}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => quickAddItem(item)}
+                            className="w-9 h-9 rounded-lg bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold flex items-center justify-center text-sm active:scale-90 transition-transform shadow-sm"
+                            title="Aggiungi uno"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* =====================================================================
+              2. VISTA GRIGLIA COMPATTA (2 COLONNE SU MOBILE, 3-4 SU TABLET/DESKTOP)
+              ===================================================================== */
+          <div className="flex-1 overflow-y-auto p-2.5 sm:p-4 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3 pb-36 sm:pb-24">
+            {filteredMenuItems.map(item => {
+              const countInCart = cartItems
+                .filter(ci => ci.menuItemId === item.id)
+                .reduce((a, b) => a + b.quantity, 0);
+
+              const isPizzaItem = item.targetDepartment === 'pizzeria';
+              const isCucinaItem = item.targetDepartment === 'cucina';
+
+              return (
+                <div
+                  key={item.id}
+                  className={`bg-zinc-900/95 border rounded-2xl p-3 flex flex-col justify-between transition-all shadow-sm min-h-[155px] ${
+                    countInCart > 0
+                      ? 'border-orange-500 ring-1 ring-orange-500/30 bg-zinc-900'
+                      : 'border-zinc-800/80 hover:border-zinc-700'
+                  } ${!item.available ? 'opacity-50 grayscale pointer-events-none' : ''}`}
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-1">
+                      <h3 className="font-extrabold text-xs sm:text-sm text-white line-clamp-2 leading-tight">
+                        {item.name}
+                      </h3>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold shrink-0 uppercase border bg-zinc-950 text-zinc-400 border-zinc-800">
+                        {isPizzaItem ? '🍕 PIZ' : isCucinaItem ? '👨‍🍳 CUC' : '🍺 BAR'}
+                      </span>
+                    </div>
+
+                    {item.recipe && item.recipe.length > 0 ? (
+                      <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
+                        {item.recipe.map((r, i) => (
+                          <span key={r.ingredientId || i}>
+                            {r.ingredientName}
+                            {i < item.recipe.length - 1 ? ', ' : ''}
+                          </span>
+                        ))}
+                      </p>
+                    ) : item.description ? (
+                      <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2">{item.description}</p>
+                    ) : null}
+
+                    <span className="font-mono font-black text-xs sm:text-sm text-emerald-400 mt-1.5 block">
+                      € {item.price.toFixed(2)}
                     </span>
                   </div>
 
-                  {/* Elenco Ingredienti Base con tag di reparto */}
-                  {item.recipe && item.recipe.length > 0 ? (
-                    <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
-                      {item.recipe.map((r, i) => (
-                        <span key={r.ingredientId || i}>
-                          {r.ingredientName}
-                          {r.sourceDepartment && r.sourceDepartment !== item.targetDepartment && (
-                            <span className="text-[9px] text-amber-400 font-semibold ml-0.5">
-                              [{r.sourceDepartment === 'cucina' ? 'Cucina' : r.sourceDepartment === 'pizzeria' ? 'Pizzeria' : 'Bar'}]
-                            </span>
-                          )}
-                          {i < item.recipe.length - 1 ? ', ' : ''}
+                  <div className="mt-2.5 pt-2 border-t border-zinc-800/80 flex items-center justify-between gap-1.5">
+                    <button
+                      type="button"
+                      onClick={(e) => openCustomization(e, item)}
+                      className="p-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 text-xs font-bold flex items-center justify-center space-x-1 active:scale-95 transition-all border border-amber-500/30 min-h-[40px] flex-1 truncate"
+                      title="Personalizza"
+                    >
+                      <Sliders className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate text-[11px]">Modifica</span>
+                    </button>
+
+                    {countInCart === 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => quickAddItem(item)}
+                        className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center text-sm font-black active:scale-90 transition-all border border-orange-400 shrink-0 shadow-sm"
+                        title="Aggiungi"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <div className="flex items-center bg-zinc-950 rounded-xl border border-orange-500/40 p-0.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => quickRemoveItem(item)}
+                          className="w-7 h-8 rounded-lg bg-zinc-800 text-white font-bold flex items-center justify-center text-xs active:scale-90"
+                        >
+                          -
+                        </button>
+                        <span className="font-mono font-black text-xs text-orange-400 w-5 text-center">
+                          {countInCart}
                         </span>
-                      ))}
-                    </p>
-                  ) : item.description ? (
-                    <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2">{item.description}</p>
-                  ) : null}
-
-                  <span className="font-mono font-black text-xs sm:text-sm text-emerald-400 mt-1.5 block">
-                    € {item.price.toFixed(2)}
-                  </span>
+                        <button
+                          type="button"
+                          onClick={() => quickAddItem(item)}
+                          className="w-7 h-8 rounded-lg bg-orange-500 text-white font-bold flex items-center justify-center text-xs active:scale-90"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                {/* Tactile Action Buttons at bottom of card */}
-                <div className="mt-2.5 pt-2 border-t border-zinc-800/80 flex items-center justify-between gap-1.5">
-                  {/* Tasto Modifiche / Aggiunte per pizze e piatti */}
-                  <button
-                    onClick={(e) => openCustomization(e, item)}
-                    className="flex-1 py-1.5 px-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-amber-400 text-[11px] font-bold flex items-center justify-center space-x-1 active:scale-95 transition-all border border-zinc-700/60 min-h-[36px]"
-                    title="Modifica ingredienti, cottura o note"
-                  >
-                    <Sliders className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span className="truncate">Personalizza</span>
-                  </button>
-
-                  {/* Pulsante Rapido Aggiungi */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      quickAddItem(item);
-                    }}
-                    className="w-9 h-9 rounded-xl bg-orange-500/15 hover:bg-orange-500 text-orange-400 hover:text-white flex items-center justify-center text-sm font-black active:scale-90 transition-all border border-orange-500/30 shrink-0"
-                    title="Aggiungi rapido"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Floating Sticky Cart Bar (Mobile Only) */}
+      {/* Floating Sticky Cart Bar (Mobile Only - Elevated cleanly above bottom navigation bar) */}
       {cartItems.length > 0 && (
-        <div className="lg:hidden fixed bottom-2 inset-x-3 z-30">
+        <div className="lg:hidden fixed bottom-[calc(3.85rem+env(safe-area-inset-bottom,0px))] inset-x-3 z-30">
           <button
+            type="button"
             onClick={() => {
               triggerHaptic();
               setIsCartOpen(true);
             }}
-            className="w-full py-3.5 px-4 bg-orange-500 active:bg-orange-600 rounded-2xl text-white font-extrabold text-xs shadow-2xl flex items-center justify-between border border-orange-400 active:scale-[0.99] transition-transform min-h-[50px]"
+            className="w-full py-3 px-3.5 bg-gradient-to-r from-orange-500 to-amber-500 active:from-orange-600 active:to-amber-600 rounded-2xl text-white font-extrabold text-xs shadow-[0_8px_25px_rgba(249,115,22,0.45)] flex items-center justify-between border border-orange-400/80 active:scale-[0.99] transition-transform min-h-[52px]"
           >
             <div className="flex items-center space-x-2">
-              <span className="bg-zinc-950/40 px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold">
-                {totalItemCount} {totalItemCount === 1 ? 'voce' : 'voci'}
+              <span className="bg-zinc-950/50 text-white px-2.5 py-1 rounded-xl font-mono text-xs font-black shadow-inner">
+                {totalItemCount} {totalItemCount === 1 ? 'piatto' : 'piatti'}
               </span>
-              <span>Tavolo #{selectedTable?.number}</span>
+              <span className="font-bold text-white truncate max-w-[120px]">
+                Tavolo #{selectedTable?.number}
+              </span>
             </div>
-            <div className="flex items-center space-x-1.5">
-              <span className="font-mono text-sm font-black">€ {grandTotal.toFixed(2)}</span>
-              <ChevronRight className="w-4 h-4" />
+            <div className="flex items-center space-x-2 shrink-0">
+              <span className="font-mono text-sm font-black bg-zinc-950/30 px-2 py-0.5 rounded-lg">
+                € {grandTotal.toFixed(2)}
+              </span>
+              <span className="flex items-center font-bold text-xs bg-white text-orange-600 px-2.5 py-1 rounded-xl shadow-sm">
+                Vedi Comanda
+                <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+              </span>
             </div>
           </button>
         </div>
       )}
 
-      {/* CARRELLO / DETTAGLIO COMANDA (Native Bottom Sheet on Mobile / Sidebar on Desktop) */}
+      {/* Backdrop Mobile per il Carrello Drawer */}
+      {isCartOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 animate-fade-in"
+          onClick={() => setIsCartOpen(false)}
+        />
+      )}
+
+      {/* CARRELLO / DETTAGLIO COMANDA (Native Bottom Sheet on Mobile z-50 / Sidebar on Desktop) */}
       <div
-        className={`fixed lg:relative inset-x-0 bottom-0 lg:bottom-0 z-40 lg:z-auto w-full lg:w-80 xl:w-96 bg-zinc-900 border-t lg:border-t-0 lg:border-l border-zinc-800 flex flex-col justify-between transition-transform duration-300 rounded-t-3xl lg:rounded-none max-h-[88dvh] lg:max-h-none shadow-2xl ${
+        className={`fixed lg:relative inset-x-0 bottom-0 lg:bottom-0 z-50 lg:z-auto w-full lg:w-80 xl:w-96 bg-zinc-900 border-t lg:border-t-0 lg:border-l border-zinc-800 flex flex-col justify-between transition-transform duration-300 rounded-t-3xl lg:rounded-none max-h-[92dvh] lg:max-h-none shadow-2xl ${
           isCartOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'
         }`}
       >
@@ -562,6 +807,7 @@ export const CameriereView: React.FC = () => {
           <div className="flex items-center space-x-1">
             {cartItems.length > 0 && (
               <button
+                type="button"
                 onClick={() => setShowConfirmClearCart(true)}
                 className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 text-xs flex items-center space-x-1"
                 title="Svuota comanda"
@@ -572,6 +818,7 @@ export const CameriereView: React.FC = () => {
             )}
 
             <button
+              type="button"
               onClick={() => setIsCartOpen(false)}
               className="lg:hidden p-1.5 rounded-full bg-zinc-800 text-zinc-400 hover:text-white"
             >
@@ -643,6 +890,7 @@ export const CameriereView: React.FC = () => {
                   <div className="flex items-center justify-between pt-1 border-t border-zinc-900">
                     <div className="flex items-center space-x-1">
                       <button
+                        type="button"
                         onClick={() => removeItem(item.id)}
                         className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-zinc-900 transition-colors"
                         title="Rimuovi voce"
@@ -652,6 +900,7 @@ export const CameriereView: React.FC = () => {
 
                       {originMenuItem && (
                         <button
+                          type="button"
                           onClick={(e) => openCustomization(e, originMenuItem, item)}
                           className="px-2 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-amber-400 text-[11px] font-bold flex items-center space-x-1"
                           title="Modifica ingredienti o note"
@@ -664,6 +913,7 @@ export const CameriereView: React.FC = () => {
 
                     <div className="flex items-center space-x-2">
                       <button
+                        type="button"
                         onClick={() => updateQuantity(item.id, -1)}
                         className="w-7 h-7 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold flex items-center justify-center text-xs active:scale-90 transition-transform"
                       >
@@ -673,6 +923,7 @@ export const CameriereView: React.FC = () => {
                         {item.quantity}
                       </span>
                       <button
+                        type="button"
                         onClick={() => updateQuantity(item.id, 1)}
                         className="w-7 h-7 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold flex items-center justify-center text-xs active:scale-90 transition-transform"
                       >
@@ -687,7 +938,7 @@ export const CameriereView: React.FC = () => {
         </div>
 
         {/* Footer Totale & Bottone Invia con protezione tocchi accidentali */}
-        <div className="p-3.5 border-t border-zinc-800 bg-zinc-950/80 space-y-2.5 pb-safe">
+        <div className="p-4 border-t border-zinc-800 bg-zinc-950/95 space-y-3 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]">
           <div className="space-y-1 text-xs">
             <div className="flex justify-between text-zinc-400">
               <span>Coperti ({guestsCount} x €1.50)</span>
@@ -700,12 +951,13 @@ export const CameriereView: React.FC = () => {
           </div>
 
           <button
+            type="button"
             onClick={() => {
               triggerHaptic();
               setShowConfirmSendModal(true);
             }}
             disabled={cartItems.length === 0}
-            className={`w-full py-3.5 px-4 rounded-2xl font-black text-xs flex items-center justify-center space-x-2 transition-all active:scale-[0.98] min-h-[48px] ${
+            className={`w-full py-4 px-4 rounded-2xl font-black text-xs flex items-center justify-center space-x-2 transition-all active:scale-[0.98] min-h-[50px] ${
               cartItems.length === 0
                 ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
                 : 'bg-orange-500 hover:bg-orange-600 text-white shadow-xl shadow-orange-500/25 border border-orange-400'

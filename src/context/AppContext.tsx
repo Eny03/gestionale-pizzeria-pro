@@ -130,7 +130,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     // Invalida cache se versione menu aggiornata (Menu Ufficiale Il Gallo con Ricette)
-    const MENU_VERSION = 'v8-il-gallo-full-recipes';
+    const MENU_VERSION = 'v10-il-gallo-mobile-perfect';
     try {
       if (localStorage.getItem('pizzeria_menu_version') !== MENU_VERSION) {
         localStorage.removeItem('pizzeria_cached_state');

@@ -171,7 +171,7 @@ export const Navbar: React.FC = () => {
       {showRoleSheet && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm animate-fade-in">
           <div
-            className="w-full sm:max-w-md bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl max-h-[85dvh] flex flex-col pb-safe"
+            className="w-full sm:max-w-md bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl max-h-[85dvh] flex flex-col pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drag Handle on mobile */}

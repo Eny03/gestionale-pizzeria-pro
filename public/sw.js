@@ -1,5 +1,5 @@
-// Service Worker per Pizzeria Smart Pro - Funzionamento 100% Offline e Senza Wi-Fi
-const CACHE_NAME = 'pizzeria-smart-cache-v6-mobile-pro';
+// Service Worker per Pizzeria Smart Pro - Funzionamento 100% Offline e Mobile-First
+const CACHE_NAME = 'pizzeria-smart-cache-v10-mobile-optimized';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -33,36 +33,25 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First per navigazione e index.html: prova la rete, se offline usa la cache
-  if (event.request.mode === 'navigate' || event.request.url.endsWith('/') || event.request.url.endsWith('index.html')) {
-    event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          return caches.match(event.request).then(cached => cached || caches.match('/index.html'));
-        })
-    );
-    return;
-  }
-
-  // Per asset statici (JS, CSS, SVG): se in cache ritorna subito, ma aggiorna in background
+  // Network-First per tutte le richieste: prova la rete per avere sempre l'ultima versione,
+  // se offline o errore rete, fa fallback alla cache locale
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
+    fetch(event.request)
+      .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const clone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return networkResponse;
-      }).catch(() => null);
-
-      return cachedResponse || fetchPromise;
-    })
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          if (cached) return cached;
+          if (event.request.mode === 'navigate' || event.request.url.endsWith('index.html')) {
+            return caches.match('/index.html');
+          }
+          return null;
+        });
+      })
   );
 });

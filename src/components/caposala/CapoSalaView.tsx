@@ -856,9 +856,17 @@ export const CapoSalaView: React.FC = () => {
         )}
       </div>
 
+      {/* Backdrop su Mobile per Scheda Tavolo */}
+      {selectedTable && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 animate-fade-in"
+          onClick={() => setOpenTableDetailsId(null)}
+        />
+      )}
+
       {/* SCHEDA DETTAGLIO TAVOLO (Bottom Sheet su Mobile / Sidebar su Desktop) */}
       {selectedTable && (
-        <div className="fixed lg:relative inset-x-0 bottom-0 lg:bottom-0 z-40 lg:z-auto w-full lg:w-80 xl:w-96 bg-zinc-900 border-t lg:border-t-0 lg:border-l border-zinc-800 p-4 space-y-3.5 shadow-2xl rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-none overflow-y-auto pb-safe">
+        <div className="fixed lg:relative inset-x-0 bottom-0 lg:bottom-0 z-50 lg:z-auto w-full lg:w-80 xl:w-96 bg-zinc-900 border-t lg:border-t-0 lg:border-l border-zinc-800 p-4 space-y-3.5 shadow-2xl rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-none overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
           {/* Drag Handle su Mobile */}
           <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto lg:hidden" />
 
