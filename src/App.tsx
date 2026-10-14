@@ -15,10 +15,10 @@ export const App: React.FC = () => {
   const { currentRole } = useApp();
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-zinc-950 text-zinc-100 overflow-hidden font-sans">
+    <div className="h-[100dvh] w-screen flex flex-col bg-zinc-950 text-zinc-100 overflow-hidden font-sans">
       <Navbar />
 
-      <main className="flex-1 overflow-hidden relative pb-14 md:pb-0">
+      <main className="flex-1 overflow-hidden relative pb-safe-nav md:pb-0">
         {currentRole === 'CAMERIERE' && <CameriereView />}
         {currentRole === 'CAPO_SALA' && <CapoSalaView />}
         {currentRole === 'PIZZERIA' && <PizzeriaView />}

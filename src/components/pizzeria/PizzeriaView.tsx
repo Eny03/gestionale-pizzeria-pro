@@ -53,7 +53,7 @@ export const PizzeriaView: React.FC = () => {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs">
+        <div className="flex items-center space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs overflow-x-auto no-scrollbar shrink-0">
           <button
             onClick={() => setActiveTab('PRE_COTTURA')}
             className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all ${

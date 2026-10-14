@@ -146,16 +146,16 @@ export const AdminView: React.FC = () => {
   return (
     <div className="h-full flex flex-col bg-zinc-950 text-zinc-100 overflow-hidden">
       {/* Header Minimal Tabs */}
-      <div className="px-3 py-2 sm:px-4 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between gap-2">
+      <div className="px-3 py-2 bg-zinc-900/90 border-b border-zinc-800/80 flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center space-x-2">
           <span className="font-bold text-sm text-white">Cassa & Gestione</span>
         </div>
 
-        <div className="flex items-center space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs">
+        <div className="flex items-center space-x-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs overflow-x-auto no-scrollbar shrink-0">
           <button
             onClick={() => setActiveTab('CASSA')}
-            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all ${
-              activeTab === 'CASSA' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all whitespace-nowrap active:scale-95 ${
+              activeTab === 'CASSA' ? 'bg-orange-500 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
             }`}
           >
             <span>Cassa / Conti</span>
@@ -166,8 +166,8 @@ export const AdminView: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('MENU')}
-            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1 transition-all ${
-              activeTab === 'MENU' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1 transition-all whitespace-nowrap active:scale-95 ${
+              activeTab === 'MENU' ? 'bg-orange-500 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
             }`}
           >
             <span>Listino Menu</span>
@@ -175,8 +175,8 @@ export const AdminView: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('INGREDIENTI')}
-            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1 transition-all ${
-              activeTab === 'INGREDIENTI' ? 'bg-orange-500 text-white' : 'text-zinc-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1.5 transition-all whitespace-nowrap active:scale-95 ${
+              activeTab === 'INGREDIENTI' ? 'bg-orange-500 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
             }`}
           >
             <span>Ingredienti</span>
@@ -396,8 +396,9 @@ export const AdminView: React.FC = () => {
 
       {/* MODALE NUOVO / MODIFICA INGREDIENTE */}
       {showIngModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3">
-          <form onSubmit={handleSaveIngredient} className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 space-y-3.5 shadow-2xl">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3">
+          <form onSubmit={handleSaveIngredient} className="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 space-y-3.5 shadow-2xl max-h-[90dvh] overflow-y-auto pb-safe">
+            <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto sm:hidden" />
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
               <h3 className="font-bold text-sm text-white">
                 {editingIng ? 'Modifica Ingrediente' : 'Nuovo Ingrediente'}
@@ -547,10 +548,11 @@ export const AdminView: React.FC = () => {
         </div>
       )}
 
-      {/* MODALE CASSA (SALDA CONTO) */}
+      {/* MODALE CASSA (SALDA CONTO - Mobile Bottom Sheet) */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3">
+          <div className="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl pb-safe">
+            <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto sm:hidden" />
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
               <div>
                 <h3 className="font-extrabold text-base text-white">{selectedOrder.tableName}</h3>
@@ -634,8 +636,9 @@ export const AdminView: React.FC = () => {
 
       {/* MODALE NUOVO / MODIFICA PIATTO */}
       {showMenuModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-3">
-          <form onSubmit={handleSaveMenuItem} className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-2xl">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-3">
+          <form onSubmit={handleSaveMenuItem} className="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-2xl pb-safe">
+            <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto sm:hidden" />
             <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
               <h3 className="font-bold text-sm text-white">{editingMenuItem ? 'Modifica Piatto' : 'Nuovo Piatto'}</h3>
               <button type="button" onClick={() => setShowMenuModal(false)} className="text-zinc-400 hover:text-white">✕</button>

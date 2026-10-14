@@ -7,24 +7,46 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
   touch-action: manipulation;
-  overscroll-behavior-y: none;
-  background-color: #030712;
-  color: #f3f4f6;
+  overscroll-behavior: none;
+  background-color: #09090b;
+  color: #f4f4f5;
+  height: 100%;
+  width: 100%;
 }
 
-/* Touch friendly minimum tap sizes */
+/* Touch friendly minimum tap sizes & smooth interaction */
 button, select, input, a {
   touch-action: manipulation;
 }
 
+button {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* Mobile notch / safe area support */
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pb-safe-nav {
+  padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
 }
 .pt-safe {
   padding-top: env(safe-area-inset-top, 0px);
+}
+.h-safe-screen {
+  height: 100dvh;
+}
+
+/* Utility to hide scrollbars on mobile categories while keeping touch swipe */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Minimal subtle scrollbar */
@@ -36,7 +58,7 @@ button, select, input, a {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background: rgba(161, 161, 170, 0.2);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -55,3 +77,4 @@ button, select, input, a {
 .glow-urgent {
   animation: pulse-glow 2s infinite ease-in-out;
 }
+
