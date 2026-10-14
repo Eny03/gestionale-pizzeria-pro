@@ -129,16 +129,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       reconnectionDelay: 1000
     });
 
-    // Recupera stato offline se presente in cache
+    // Invalida cache se versione menu aggiornata (Menu Ufficiale Il Gallo)
+    const MENU_VERSION = 'v7-il-gallo-full-menu';
     try {
-      const cached = localStorage.getItem('pizzeria_cached_state');
-      if (cached) {
-        const data = JSON.parse(cached);
-        if (data.orders) setOrders(data.orders);
-        if (data.menuItems) setMenuItems(data.menuItems);
-        if (data.tables) setTables(data.tables);
-        if (data.ingredients) setIngredients(data.ingredients);
-        if (data.zones) setZones(data.zones);
+      if (localStorage.getItem('pizzeria_menu_version') !== MENU_VERSION) {
+        localStorage.removeItem('pizzeria_cached_state');
+        localStorage.setItem('pizzeria_menu_version', MENU_VERSION);
+      } else {
+        const cached = localStorage.getItem('pizzeria_cached_state');
+        if (cached) {
+          const data = JSON.parse(cached);
+          if (data.orders) setOrders(data.orders);
+          if (data.menuItems) setMenuItems(data.menuItems);
+          if (data.tables) setTables(data.tables);
+          if (data.ingredients) setIngredients(data.ingredients);
+          if (data.zones) setZones(data.zones);
+        }
       }
     } catch (e) {
       console.warn('Errore lettura cache offline:', e);

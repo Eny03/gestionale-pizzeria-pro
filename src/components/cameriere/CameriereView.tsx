@@ -181,7 +181,7 @@ export const CameriereView: React.FC = () => {
     setCartItems(prev => prev.filter(item => item.id !== itemId));
   };
 
-  const coverRate = 2.00;
+  const coverRate = 1.50;
   const coverTotal = guestsCount * coverRate;
   const itemsSubtotal = cartItems.reduce((acc, item) => acc + item.subtotal, 0);
   const grandTotal = Number((itemsSubtotal + coverTotal).toFixed(2));
@@ -220,11 +220,13 @@ export const CameriereView: React.FC = () => {
 
   const categories: { key: MenuCategory | 'ALL'; label: string; icon: string }[] = [
     { key: 'ALL', label: 'Tutti', icon: '🍽️' },
-    { key: 'pizze_classiche', label: 'Classiche', icon: '🍕' },
-    { key: 'pizze_speciali', label: 'Speciali', icon: '⭐' },
-    { key: 'antipasti_cucina', label: 'Cucina', icon: '🥗' },
-    { key: 'fritti', label: 'Fritti', icon: '🍟' },
-    { key: 'bevande', label: 'Bevande', icon: '🍺' }
+    { key: 'pizze_classiche', label: 'Pizze Classiche', icon: '🍕' },
+    { key: 'pizze_speciali', label: 'Pizze Speciali', icon: '⭐' },
+    { key: 'antipasti_cucina', label: 'Antipasti & Burgers', icon: '🍔' },
+    { key: 'primi_secondi', label: 'Primi & Secondi', icon: '🍝' },
+    { key: 'fritti', label: 'Fritti & Contorni', icon: '🍟' },
+    { key: 'bevande', label: 'Bevande & Birre', icon: '🍺' },
+    { key: 'dolci', label: 'Dessert', icon: '🍰' }
   ];
 
   // FILTRO ESCLUSIVO PER AGGIUNTE PIZZA: SOLO ingredienti del reparto pizzeria!
@@ -537,7 +539,7 @@ export const CameriereView: React.FC = () => {
         <div className="p-3.5 border-t border-zinc-800 bg-zinc-950/80 space-y-2.5 pb-safe">
           <div className="space-y-1 text-xs">
             <div className="flex justify-between text-zinc-400">
-              <span>Coperti ({guestsCount} x €2.00)</span>
+              <span>Coperti ({guestsCount} x €1.50)</span>
               <span className="font-mono">€ {coverTotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm font-black text-white pt-1 border-t border-zinc-800">
