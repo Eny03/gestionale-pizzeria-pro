@@ -132,9 +132,26 @@ export const CucinaView: React.FC = () => {
                           </span>
                         </div>
 
-                        {item.customization.notes && (
-                          <div className="bg-amber-500/10 border border-amber-500/20 p-2 rounded-xl text-xs text-amber-300 italic">
-                            "{item.customization.notes}"
+                        {/* Ingredienti Aggiunti, Rimossi e Note */}
+                        {(item.customization.addedIngredients.length > 0 ||
+                          item.customization.removedIngredients.length > 0 ||
+                          item.customization.notes) && (
+                          <div className="bg-amber-500/10 border border-amber-500/20 p-2 rounded-xl text-xs space-y-0.5">
+                            {item.customization.addedIngredients.map(add => (
+                              <div key={add.ingredientId} className="text-emerald-400 font-bold">
+                                + {add.name}
+                              </div>
+                            ))}
+                            {item.customization.removedIngredients.map(rem => (
+                              <div key={rem.ingredientId} className="text-rose-400 font-bold line-through">
+                                - Senza {rem.name}
+                              </div>
+                            ))}
+                            {item.customization.notes && (
+                              <div className="text-amber-300 italic pt-0.5">
+                                "{item.customization.notes}"
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>

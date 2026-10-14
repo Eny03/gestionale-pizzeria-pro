@@ -75,7 +75,7 @@ export const BarView: React.FC = () => {
                   </div>
 
                   {/* Body */}
-                  <div className="p-3.5 flex-1">
+                  <div className="p-3.5 flex-1 space-y-2">
                     <div className="flex items-start justify-between">
                       <h3 className="text-base font-extrabold text-white leading-tight">
                         {item.name}
@@ -84,6 +84,29 @@ export const BarView: React.FC = () => {
                         x{item.quantity}
                       </span>
                     </div>
+
+                    {/* Modifiche e Note */}
+                    {(item.customization.addedIngredients.length > 0 ||
+                      item.customization.removedIngredients.length > 0 ||
+                      item.customization.notes) && (
+                      <div className="bg-purple-950/40 border border-purple-500/20 p-2 rounded-xl text-xs space-y-0.5 mt-2">
+                        {item.customization.addedIngredients.map(add => (
+                          <div key={add.ingredientId} className="text-emerald-400 font-bold">
+                            + {add.name}
+                          </div>
+                        ))}
+                        {item.customization.removedIngredients.map(rem => (
+                          <div key={rem.ingredientId} className="text-rose-400 font-bold line-through">
+                            - Senza {rem.name}
+                          </div>
+                        ))}
+                        {item.customization.notes && (
+                          <div className="text-amber-300 italic pt-0.5">
+                            "{item.customization.notes}"
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Action Button */}

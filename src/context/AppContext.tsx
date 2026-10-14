@@ -129,8 +129,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       reconnectionDelay: 1000
     });
 
-    // Invalida cache se versione menu aggiornata (Menu Ufficiale Il Gallo)
-    const MENU_VERSION = 'v7-il-gallo-full-menu';
+    // Invalida cache se versione menu aggiornata (Menu Ufficiale Il Gallo con Ricette)
+    const MENU_VERSION = 'v8-il-gallo-full-recipes';
     try {
       if (localStorage.getItem('pizzeria_menu_version') !== MENU_VERSION) {
         localStorage.removeItem('pizzeria_cached_state');
@@ -320,6 +320,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateIngredient = (ingredient: Ingredient) => {
     socket?.emit('inventory:updateIngredient', ingredient);
+    setIngredients(prev => {
+      const idx = prev.findIndex(i => i.id === ingredient.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = ingredient;
+        return copy;
+      }
+      return [...prev, ingredient];
+    });
+    addToast('Ingrediente Salvato', `"${ingredient.name}" salvato per il reparto ${ingredient.stationTarget.toUpperCase()}.`, 'success');
   };
 
   const deleteIngredient = (ingredientId: string) => {
@@ -351,6 +361,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const saveMenuItem = (item: MenuItem) => {
     socket?.emit('menu:saveItem', item);
+    setMenuItems(prev => {
+      const idx = prev.findIndex(m => m.id === item.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = item;
+        return copy;
+      }
+      return [...prev, item];
+    });
+    addToast('Menu Aggiornato', `"${item.name}" salvato nel listino.`, 'success');
   };
 
   const toggleEndSeat = (tableId: string) => {
@@ -391,6 +411,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const deleteMenuItem = (itemId: string) => {
     socket?.emit('menu:deleteItem', itemId);
+    setMenuItems(prev => prev.filter(m => m.id !== itemId));
+    addToast('Piatto Rimosso', 'Piatto eliminato dal menu.', 'info');
   };
 
   return (

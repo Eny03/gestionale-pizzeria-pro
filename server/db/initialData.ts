@@ -730,7 +730,451 @@ export const initialIngredients: Ingredient[] = [
     costPerUnit: 0.00,
     expiryDate: '2099-12-31',
     lotNumber: 'TAG-SPIC'
+  },
+  // ==========================================================================
+  // REPARTO CUCINA: Carni, Primi, Secondi, Hamburger & Insalate
+  // ==========================================================================
+  {
+    id: 'ing-cuc-1',
+    name: 'Hamburger di Chianina IGP (200g)',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 5.00,
+    currentStock: 30,
+    unit: 'pz',
+    minThreshold: 5,
+    costPerUnit: 4.50,
+    expiryDate: '2026-10-20',
+    lotNumber: 'BUR-CHIA-01'
+  },
+  {
+    id: 'ing-cuc-2',
+    name: 'Hamburger di Scottona (200g)',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 4.00,
+    currentStock: 35,
+    unit: 'pz',
+    minThreshold: 5,
+    costPerUnit: 3.80,
+    expiryDate: '2026-10-20',
+    lotNumber: 'BUR-SCOT-01'
+  },
+  {
+    id: 'ing-cuc-3',
+    name: 'Hamburger di Patanegra (200g)',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 5.00,
+    currentStock: 25,
+    unit: 'pz',
+    minThreshold: 5,
+    costPerUnit: 4.80,
+    expiryDate: '2026-10-20',
+    lotNumber: 'BUR-PATA-01'
+  },
+  {
+    id: 'ing-cuc-4',
+    name: 'Hamburger di Black Angus (200g)',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 4.50,
+    currentStock: 30,
+    unit: 'pz',
+    minThreshold: 5,
+    costPerUnit: 4.00,
+    expiryDate: '2026-10-20',
+    lotNumber: 'BUR-ANGU-01'
+  },
+  {
+    id: 'ing-cuc-5',
+    name: 'Pulled Pork Sfilacciato',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 4.50,
+    currentStock: 15.0,
+    unit: 'kg',
+    minThreshold: 3.0,
+    costPerUnit: 9.00,
+    expiryDate: '2026-10-24',
+    lotNumber: 'PUL-PORK-01'
+  },
+  {
+    id: 'ing-cuc-6',
+    name: 'Bacon Croccante a Fette',
+    category: 'salumi',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 2.00,
+    currentStock: 8.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 8.00,
+    expiryDate: '2026-11-05',
+    lotNumber: 'BAC-CUC-01'
+  },
+  {
+    id: 'ing-cuc-7',
+    name: 'Formaggio Cheddar Fuso',
+    category: 'latticini',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 1.50,
+    currentStock: 6.0,
+    unit: 'kg',
+    minThreshold: 1.5,
+    costPerUnit: 7.00,
+    expiryDate: '2026-11-15',
+    lotNumber: 'CHE-CUC-01'
+  },
+  {
+    id: 'ing-cuc-8',
+    name: 'Salsa Gallo della Casa',
+    category: 'salse',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 1.00,
+    currentStock: 5.0,
+    unit: 'kg',
+    minThreshold: 1.0,
+    costPerUnit: 3.00,
+    expiryDate: '2026-11-20',
+    lotNumber: 'SAL-GAL-01'
+  },
+  {
+    id: 'ing-cuc-9',
+    name: 'Salsa Senape & Miele',
+    category: 'salse',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 1.00,
+    currentStock: 4.0,
+    unit: 'kg',
+    minThreshold: 1.0,
+    costPerUnit: 4.00,
+    expiryDate: '2026-11-20',
+    lotNumber: 'SEN-MIE-01'
+  },
+  {
+    id: 'ing-cuc-10',
+    name: 'Petto di Pollo Grigliato',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 3.00,
+    currentStock: 12.0,
+    unit: 'kg',
+    minThreshold: 2.5,
+    costPerUnit: 7.50,
+    expiryDate: '2026-10-22',
+    lotNumber: 'POL-GRI-01'
+  },
+  {
+    id: 'ing-cuc-11',
+    name: 'Code di Gambero Scottate',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 3.50,
+    currentStock: 8.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 14.00,
+    expiryDate: '2026-10-25',
+    lotNumber: 'GAM-SCO-01'
+  },
+  {
+    id: 'ing-cuc-12',
+    name: 'Uovo all Occhio / Sodo',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 1.50,
+    currentStock: 60,
+    unit: 'pz',
+    minThreshold: 12,
+    costPerUnit: 0.35,
+    expiryDate: '2026-11-02',
+    lotNumber: 'UOV-FRE-01'
+  },
+  {
+    id: 'ing-cuc-13',
+    name: 'Crostini di Pane / Focaccia',
+    category: 'impasto',
+    stationTarget: 'pizzeria',
+    isPreBake: false,
+    extraPrice: 1.00,
+    currentStock: 5.0,
+    unit: 'kg',
+    minThreshold: 1.0,
+    costPerUnit: 2.00,
+    expiryDate: '2026-10-28',
+    lotNumber: 'CRO-PAN-01'
+  },
+  {
+    id: 'ing-cuc-14',
+    name: 'Gnocco Fritto Caldo',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 2.00,
+    currentStock: 50,
+    unit: 'pz',
+    minThreshold: 10,
+    costPerUnit: 0.50,
+    expiryDate: '2026-10-25',
+    lotNumber: 'GNO-FRI-01'
+  },
+  {
+    id: 'ing-cuc-15',
+    name: 'Polenta Calda Tradizionale',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 2.50,
+    currentStock: 10.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 1.50,
+    expiryDate: '2026-10-22',
+    lotNumber: 'POL-CAL-01'
+  },
+  {
+    id: 'ing-cuc-16',
+    name: 'Ragù Rustico di Cinghiale',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 3.50,
+    currentStock: 10.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 8.00,
+    expiryDate: '2026-10-25',
+    lotNumber: 'RAG-CIN-01'
+  },
+  {
+    id: 'ing-cuc-17',
+    name: 'Filetto di Manzo',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 6.00,
+    currentStock: 15,
+    unit: 'pz',
+    minThreshold: 3,
+    costPerUnit: 7.00,
+    expiryDate: '2026-10-22',
+    lotNumber: 'FIL-MAN-01'
+  },
+  {
+    id: 'ing-cuc-18',
+    name: 'Fritto Misto di Pesce (Calamari & Gamberi)',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 6.00,
+    currentStock: 10.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 8.50,
+    expiryDate: '2026-10-24',
+    lotNumber: 'FRI-MIS-01'
+  },
+  {
+    id: 'ing-cuc-19',
+    name: 'Cotoletta Panata',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 4.00,
+    currentStock: 20,
+    unit: 'pz',
+    minThreshold: 4,
+    costPerUnit: 2.80,
+    expiryDate: '2026-10-23',
+    lotNumber: 'COT-PAN-01'
+  },
+  {
+    id: 'ing-cuc-20',
+    name: 'Polpette di Scottona al Sugo',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 3.50,
+    currentStock: 25,
+    unit: 'pz',
+    minThreshold: 5,
+    costPerUnit: 2.00,
+    expiryDate: '2026-10-23',
+    lotNumber: 'POL-SCO-01'
+  },
+  {
+    id: 'ing-cuc-21',
+    name: 'Stick di Pollo Croccanti',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 3.00,
+    currentStock: 15.0,
+    unit: 'kg',
+    minThreshold: 3.0,
+    costPerUnit: 4.50,
+    expiryDate: '2026-11-10',
+    lotNumber: 'STI-POL-01'
+  },
+  {
+    id: 'ing-cuc-22',
+    name: 'Verdure Grigliate (Zucchine, Melanzane, Peperoni)',
+    category: 'verdure',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 2.50,
+    currentStock: 8.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 3.00,
+    expiryDate: '2026-10-22',
+    lotNumber: 'VER-GRI-01'
+  },
+  {
+    id: 'ing-cuc-23',
+    name: 'Insalata Lattuga / Misticanza',
+    category: 'verdure',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 1.00,
+    currentStock: 10.0,
+    unit: 'kg',
+    minThreshold: 2.0,
+    costPerUnit: 2.00,
+    expiryDate: '2026-10-20',
+    lotNumber: 'INS-MIS-01'
+  },
+  {
+    id: 'ing-cuc-24',
+    name: 'Patatine Fritte Calde Porzione',
+    category: 'cucina',
+    stationTarget: 'cucina',
+    isPreBake: false,
+    extraPrice: 3.00,
+    currentStock: 25.0,
+    unit: 'kg',
+    minThreshold: 5.0,
+    costPerUnit: 1.80,
+    expiryDate: '2026-12-31',
+    lotNumber: 'PAT-FRI-01'
+  },
+
+  // ==========================================================================
+  // REPARTO BAR: Bevande, Birre, Vini, Caffetteria
+  // ==========================================================================
+  {
+    id: 'ing-bar-1',
+    name: 'Birra alla Spina Moretti Bionda',
+    category: 'bevande',
+    stationTarget: 'bar',
+    isPreBake: false,
+    extraPrice: 2.50,
+    currentStock: 120.0,
+    unit: 'l',
+    minThreshold: 20.0,
+    costPerUnit: 1.80,
+    expiryDate: '2026-12-31',
+    lotNumber: 'FUS-MOR-01'
+  },
+  {
+    id: 'ing-bar-2',
+    name: 'Birra Ichnusa Non Filtrata Spina',
+    category: 'bevande',
+    stationTarget: 'bar',
+    isPreBake: false,
+    extraPrice: 3.00,
+    currentStock: 90.0,
+    unit: 'l',
+    minThreshold: 15.0,
+    costPerUnit: 2.20,
+    expiryDate: '2026-12-31',
+    lotNumber: 'FUS-ICH-01'
+  },
+  {
+    id: 'ing-bar-3',
+    name: 'Bibita in Lattina (Coca, Fanta, Sprite, Thé)',
+    category: 'bevande',
+    stationTarget: 'bar',
+    isPreBake: false,
+    extraPrice: 3.00,
+    currentStock: 80,
+    unit: 'pz',
+    minThreshold: 15,
+    costPerUnit: 0.80,
+    expiryDate: '2027-06-30',
+    lotNumber: 'BIB-LAT-01'
+  },
+  {
+    id: 'ing-bar-4',
+    name: 'Acqua San Pellegrino / Panna 0.75 L',
+    category: 'bevande',
+    stationTarget: 'bar',
+    isPreBake: false,
+    extraPrice: 2.50,
+    currentStock: 150,
+    unit: 'pz',
+    minThreshold: 24,
+    costPerUnit: 0.50,
+    expiryDate: '2027-12-31',
+    lotNumber: 'ACQ-BOT-01'
+  },
+  {
+    id: 'ing-bar-5',
+    name: 'Caffè Espresso / Decaffeinato',
+    category: 'bevande',
+    stationTarget: 'bar',
+    isPreBake: false,
+    extraPrice: 1.50,
+    currentStock: 5.0,
+    unit: 'kg',
+    minThreshold: 1.0,
+    costPerUnit: 15.00,
+    expiryDate: '2027-01-31',
+    lotNumber: 'CAF-ESP-01'
+  },
+  {
+    id: 'ing-bar-6',
+    name: 'Fetta di Limone / Agrumi',
+    category: 'condimenti',
+    stationTarget: 'bar',
+    isPreBake: false,
+    requiresClarification: true,
+    extraPrice: 0.00,
+    currentStock: 50,
+    unit: 'pz',
+    minThreshold: 5,
+    costPerUnit: 0.10,
+    expiryDate: '2026-10-25',
+    lotNumber: 'LIM-BAR-01'
+  },
+  {
+    id: 'ing-bar-7',
+    name: 'Ghiaccio Extra',
+    category: 'condimenti',
+    stationTarget: 'bar',
+    isPreBake: false,
+    requiresClarification: true,
+    extraPrice: 0.00,
+    currentStock: 999,
+    unit: 'pz',
+    minThreshold: 0,
+    costPerUnit: 0.00,
+    expiryDate: '2099-12-31',
+    lotNumber: 'GHI-BAR-01'
   }
+
 ];
 
 export const initialStationStock: StationStockItem[] = [
@@ -758,9 +1202,9 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -773,9 +1217,9 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-29', ingredientName: 'Olive Nere', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-29', ingredientName: 'Olive Nere', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -788,10 +1232,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -804,11 +1248,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-30', ingredientName: 'Capperi', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-30', ingredientName: 'Capperi', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -821,10 +1265,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-35', ingredientName: 'Cipolle', quantity: 0.04, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-35', ingredientName: 'Cipolle', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -837,10 +1281,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.05, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -853,11 +1297,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi Champignon', quantity: 0.05, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi Champignon', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -870,10 +1314,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi Champignon', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi Champignon', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -886,10 +1330,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-14', ingredientName: 'Salamino Piccante', quantity: 0.05, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-14', ingredientName: 'Salamino Piccante', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -902,10 +1346,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-15', ingredientName: 'Salsiccia', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-15', ingredientName: 'Salsiccia', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'cucina' }
     ]
   },
   {
@@ -918,10 +1362,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-20', ingredientName: 'Wurstel', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-20', ingredientName: 'Wurstel', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -934,10 +1378,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-21', ingredientName: 'Tonno', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-21', ingredientName: 'Tonno', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -950,10 +1394,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -966,11 +1410,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-34', ingredientName: 'Spinaci', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-9', ingredientName: 'Grana', quantity: 0.02, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-34', ingredientName: 'Spinaci', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-9', ingredientName: 'Grana', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -983,11 +1427,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 10,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-39', ingredientName: 'Pomodorini', quantity: 0.04, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-35', ingredientName: 'Cipolle', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-39', ingredientName: 'Pomodorini', quantity: 0.04, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-35', ingredientName: 'Cipolle', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1000,11 +1444,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-37', ingredientName: 'Asparagi', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-42', ingredientName: 'Uovo', quantity: 1, unit: 'pz', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-37', ingredientName: 'Asparagi', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-42', ingredientName: 'Uovo', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1017,10 +1461,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
 
@@ -1037,12 +1481,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.04, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1055,14 +1499,14 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-33', ingredientName: 'Peperoni', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-29', ingredientName: 'Olive', quantity: 0.02, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-33', ingredientName: 'Peperoni', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-29', ingredientName: 'Olive', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1075,12 +1519,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1093,14 +1537,14 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-7', ingredientName: 'Brie', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-5', ingredientName: 'Scamorza', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-8', ingredientName: 'Taleggio', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-9', ingredientName: 'Grana', quantity: 0.02, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-7', ingredientName: 'Brie', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-5', ingredientName: 'Scamorza', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-8', ingredientName: 'Taleggio', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-9', ingredientName: 'Grana', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1113,11 +1557,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-5', ingredientName: 'Scamorza', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-5', ingredientName: 'Scamorza', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1130,10 +1574,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-3', ingredientName: 'Bufala', quantity: 0.10, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-3', ingredientName: 'Bufala', quantity: 0.10, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1146,11 +1590,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-39', ingredientName: 'Pomodorini', quantity: 0.04, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-39', ingredientName: 'Pomodorini', quantity: 0.04, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1163,10 +1607,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-13', ingredientName: 'Crudo di Parma', quantity: 0.06, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-13', ingredientName: 'Crudo di Parma', quantity: 0.06, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1179,11 +1623,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-17', ingredientName: 'Bresaola', quantity: 0.05, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-17', ingredientName: 'Bresaola', quantity: 0.05, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-38', ingredientName: 'Rucola', quantity: 0.02, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1196,11 +1640,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-7', ingredientName: 'Brie', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-16', ingredientName: 'Speck', quantity: 0.05, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-7', ingredientName: 'Brie', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-16', ingredientName: 'Speck', quantity: 0.05, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1213,11 +1657,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-7', ingredientName: 'Brie', quantity: 0.04, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-7', ingredientName: 'Brie', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1230,12 +1674,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-33', ingredientName: 'Peperoni', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-33', ingredientName: 'Peperoni', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto Cotto', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1248,12 +1692,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-32', ingredientName: 'Zucchine', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-33', ingredientName: 'Peperoni', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-32', ingredientName: 'Zucchine', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-33', ingredientName: 'Peperoni', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1266,11 +1710,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-40', ingredientName: 'Radicchio', quantity: 0.04, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-40', ingredientName: 'Radicchio', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1283,12 +1727,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-14', ingredientName: 'Salamino Piccante', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-35', ingredientName: 'Cipolle', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.03, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-14', ingredientName: 'Salamino Piccante', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-35', ingredientName: 'Cipolle', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1301,11 +1745,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-43', ingredientName: 'Noci', quantity: 0.03, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-43', ingredientName: 'Noci', quantity: 0.03, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1318,11 +1762,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-44', ingredientName: 'Pere', quantity: 0.04, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-6', ingredientName: 'Zola', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-44', ingredientName: 'Pere', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1335,10 +1779,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-27', ingredientName: 'Porcini', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-27', ingredientName: 'Porcini', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1351,10 +1795,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-27', ingredientName: 'Porcini', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-8', ingredientName: 'Taleggio', quantity: 0.05, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-27', ingredientName: 'Porcini', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-8', ingredientName: 'Taleggio', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1367,11 +1811,11 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-27', ingredientName: 'Porcini', quantity: 0.05, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-13', ingredientName: 'Crudo di Parma', quantity: 0.05, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-27', ingredientName: 'Porcini', quantity: 0.05, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-13', ingredientName: 'Crudo di Parma', quantity: 0.05, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1384,13 +1828,13 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-8', ingredientName: 'Taleggio', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-36', ingredientName: 'Cipolle Caramellate', quantity: 0.04, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-43', ingredientName: 'Noci', quantity: 0.02, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-45', ingredientName: 'Curry', quantity: 0.005, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-8', ingredientName: 'Taleggio', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-36', ingredientName: 'Cipolle Caramellate', quantity: 0.04, unit: 'kg', isPreBake: false, sourceDepartment: 'cucina' },
+      { ingredientId: 'ing-43', ingredientName: 'Noci', quantity: 0.02, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-45', ingredientName: 'Curry', quantity: 0.005, unit: 'kg', isPreBake: true, sourceDepartment: 'cucina' }
     ]
   },
   {
@@ -1403,12 +1847,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-18', ingredientName: 'Coppa', quantity: 0.05, unit: 'kg', isPreBake: false },
-      { ingredientId: 'ing-29', ingredientName: 'Olive', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-46', ingredientName: 'Peperoncino', quantity: 0.01, unit: 'l', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-18', ingredientName: 'Coppa', quantity: 0.05, unit: 'kg', isPreBake: false, sourceDepartment: 'cucina' },
+      { ingredientId: 'ing-29', ingredientName: 'Olive', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-46', ingredientName: 'Peperoncino', quantity: 0.01, unit: 'l', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1421,12 +1865,12 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-14', ingredientName: 'Salamino', quantity: 0.04, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-46', ingredientName: 'Peperoncino', quantity: 0.01, unit: 'l', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-14', ingredientName: 'Salamino', quantity: 0.04, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-46', ingredientName: 'Peperoncino', quantity: 0.01, unit: 'l', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1439,10 +1883,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-41', ingredientName: 'Patatine Fritte', quantity: 0.08, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-41', ingredientName: 'Patatine Fritte', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'cucina' }
     ]
   },
   {
@@ -1455,10 +1899,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-11', ingredientName: 'Panna', quantity: 0.04, unit: 'l', isPreBake: true },
-      { ingredientId: 'ing-22', ingredientName: 'Salmone', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-11', ingredientName: 'Panna', quantity: 0.04, unit: 'l', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-22', ingredientName: 'Salmone', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'cucina' }
     ]
   },
   {
@@ -1471,10 +1915,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 11,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-23', ingredientName: 'Gamberetti', quantity: 0.06, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.10, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-23', ingredientName: 'Gamberetti', quantity: 0.06, unit: 'kg', isPreBake: true, sourceDepartment: 'cucina' }
     ]
   },
   {
@@ -1487,10 +1931,10 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-24', ingredientName: 'Frutti di Mare', quantity: 0.07, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-24', ingredientName: 'Frutti di Mare', quantity: 0.07, unit: 'kg', isPreBake: true, sourceDepartment: 'cucina' }
     ]
   },
   {
@@ -1503,13 +1947,13 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 12,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-29', ingredientName: 'Olive Nere', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-16', ingredientName: 'Speck', quantity: 0.04, unit: 'kg', isPreBake: false }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.09, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-31', ingredientName: 'Melanzane', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-29', ingredientName: 'Olive Nere', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-16', ingredientName: 'Speck', quantity: 0.04, unit: 'kg', isPreBake: false, sourceDepartment: 'pizzeria' }
     ]
   },
   {
@@ -1522,16 +1966,16 @@ export const initialMenuItems: MenuItem[] = [
     prepTimeMinutes: 13,
     available: true,
     recipe: [
-      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true },
-      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.08, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-12', ingredientName: 'Prosciutto', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-37', ingredientName: 'Asparagi', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-20', ingredientName: 'Wurstel', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-14', ingredientName: 'Salamino', quantity: 0.02, unit: 'kg', isPreBake: true },
-      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.02, unit: 'kg', isPreBake: true }
+      { ingredientId: 'ing-1', ingredientName: 'Panetto Impasto', quantity: 1, unit: 'pz', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-10', ingredientName: 'Pomodoro', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-2', ingredientName: 'Mozzarella', quantity: 0.08, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-12', ingredientName: 'Prosciutto', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-26', ingredientName: 'Funghi', quantity: 0.03, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-37', ingredientName: 'Asparagi', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-28', ingredientName: 'Carciofi', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-20', ingredientName: 'Wurstel', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-14', ingredientName: 'Salamino', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' },
+      { ingredientId: 'ing-25', ingredientName: 'Acciughe', quantity: 0.02, unit: 'kg', isPreBake: true, sourceDepartment: 'pizzeria' }
     ]
   },
 
@@ -1547,7 +1991,73 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-10",
+                "ingredientName": "Petto di Pollo Grigliato",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Insalata Mista / Lattuga",
+                "quantity": 0.1,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-39",
+                "ingredientName": "Pomodorini Freschi",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-12",
+                "ingredientName": "Uovo Sodo",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-43",
+                "ingredientName": "Noci",
+                "quantity": 0.02,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-29",
+                "ingredientName": "Olive Nere",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-30",
+                "ingredientName": "Capperi",
+                "quantity": 0.01,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Crostini di Focaccia",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          }
+        ]
   },
   {
     id: 'sal-2',
@@ -1558,7 +2068,57 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Insalata Mista e Rucola",
+                "quantity": 0.12,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-38",
+                "ingredientName": "Rucola Fresca",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-39",
+                "ingredientName": "Pomodorini",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-35",
+                "ingredientName": "Cipolle Rosse",
+                "quantity": 0.02,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-43",
+                "ingredientName": "Noci",
+                "quantity": 0.02,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Crostini di Focaccia",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          }
+        ]
   },
   {
     id: 'sal-3',
@@ -1569,7 +2129,57 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 9,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-11",
+                "ingredientName": "Code di Gambero Scottate",
+                "quantity": 0.12,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-38",
+                "ingredientName": "Rucola Fresca",
+                "quantity": 0.06,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Insalata Lattuga",
+                "quantity": 0.06,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-39",
+                "ingredientName": "Pomodorini Freschi",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-35",
+                "ingredientName": "Cipolle Rosse",
+                "quantity": 0.02,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Crostini di Focaccia",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          }
+        ]
   },
   {
     id: 'sal-4',
@@ -1580,7 +2190,57 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Insalata Verde Mista",
+                "quantity": 0.12,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-39",
+                "ingredientName": "Pomodorini Freschi",
+                "quantity": 0.06,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-35",
+                "ingredientName": "Cipolle Rosse",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-29",
+                "ingredientName": "Olive Nere",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-4",
+                "ingredientName": "Mozzarella di Bufala",
+                "quantity": 0.1,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Crostini di Focaccia",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          }
+        ]
   },
 
   // --------------------------------------------------------------------------
@@ -1595,7 +2255,81 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 15,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-1",
+                "ingredientName": "Hamburger di Chianina IGP (200g)",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Pane Bun Artigianale",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-27",
+                "ingredientName": "Funghi Porcini Trifolati",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-12",
+                "ingredientName": "Uovo all Occhio",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Scaglie di Grana Padano",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Lattuga Fresca",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Calde (Contorno)",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-bar-1",
+                "ingredientName": "Birra Bionda / Bibita",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          },
+          {
+                "ingredientId": "ing-bar-5",
+                "ingredientName": "Caffè Espresso",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          }
+        ]
   },
   {
     id: 'bur-2',
@@ -1606,7 +2340,81 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 14,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-2",
+                "ingredientName": "Hamburger di Scottona (200g)",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Pane Bun Artigianale",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-6",
+                "ingredientName": "Bacon Croccante",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-32",
+                "ingredientName": "Zucchine Grigliate",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-2",
+                "ingredientName": "Mozzarella Fiordilatte",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Lattuga e Pomodoro",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Calde (Contorno)",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-bar-1",
+                "ingredientName": "Birra Bionda / Bibita",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          },
+          {
+                "ingredientId": "ing-bar-5",
+                "ingredientName": "Caffè Espresso",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          }
+        ]
   },
   {
     id: 'bur-3',
@@ -1617,7 +2425,89 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 15,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-3",
+                "ingredientName": "Hamburger di Patanegra (200g)",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Pane Bun Artigianale",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-8",
+                "ingredientName": "Salsa Gallo della Casa",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-13",
+                "ingredientName": "Prosciutto Crudo di Parma",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-4",
+                "ingredientName": "Mozzarella di Bufala",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-39",
+                "ingredientName": "Pomodorini Confit",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Lattuga Fresca",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Calde (Contorno)",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-bar-1",
+                "ingredientName": "Birra Bionda / Bibita",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          },
+          {
+                "ingredientId": "ing-bar-5",
+                "ingredientName": "Caffè Espresso",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          }
+        ]
   },
   {
     id: 'bur-4',
@@ -1628,7 +2518,81 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 14,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-4",
+                "ingredientName": "Hamburger di Black Angus (200g)",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Pane Bun Artigianale",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-6",
+                "ingredientName": "Bacon Croccante",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-35",
+                "ingredientName": "Cipolle Bianche / Rosse",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-5",
+                "ingredientName": "Scamorza Affumicata",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Lattuga e Pomodoro",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Calde (Contorno)",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-bar-1",
+                "ingredientName": "Birra Bionda / Bibita",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          },
+          {
+                "ingredientId": "ing-bar-5",
+                "ingredientName": "Caffè Espresso",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          }
+        ]
   },
   {
     id: 'bur-5',
@@ -1639,7 +2603,65 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 15,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-5",
+                "ingredientName": "Pulled Pork Sfilacciato",
+                "quantity": 0.18,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-13",
+                "ingredientName": "Pane Bun Artigianale",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "pizzeria"
+          },
+          {
+                "ingredientId": "ing-cuc-9",
+                "ingredientName": "Salsa Senape & Miele",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-23",
+                "ingredientName": "Insalata Verde / Capricciosa",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Speziate Calde (Contorno)",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-bar-1",
+                "ingredientName": "Birra Bionda / Bibita",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          },
+          {
+                "ingredientId": "ing-bar-5",
+                "ingredientName": "Caffè Espresso",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "bar"
+          }
+        ]
   },
 
   // --------------------------------------------------------------------------
@@ -1654,7 +2676,49 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 7,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-13",
+                "ingredientName": "Prosciutto Crudo di Parma",
+                "quantity": 0.06,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-15",
+                "ingredientName": "Salame Nostrano & Coppa",
+                "quantity": 0.06,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-8",
+                "ingredientName": "Taleggio DOP",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-6",
+                "ingredientName": "Gorgonzola DOP",
+                "quantity": 0.05,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-14",
+                "ingredientName": "Gnocco Fritto Caldo",
+                "quantity": 4,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'cuc-2',
@@ -1665,7 +2729,57 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 9,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-13",
+                "ingredientName": "Prosciutto Crudo di Parma",
+                "quantity": 0.12,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-15",
+                "ingredientName": "Salame Nostrano & Coppa",
+                "quantity": 0.12,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-8",
+                "ingredientName": "Taleggio DOP",
+                "quantity": 0.1,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-6",
+                "ingredientName": "Gorgonzola DOP",
+                "quantity": 0.1,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Grana Padano Riserva",
+                "quantity": 0.08,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-14",
+                "ingredientName": "Gnocco Fritto Caldo",
+                "quantity": 8,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'cuc-3',
@@ -1676,7 +2790,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 18,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-27",
+                "ingredientName": "Funghi Porcini Nostrani",
+                "quantity": 0.08,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Mantecatura Grana Padano & Burro",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'cuc-4',
@@ -1687,7 +2819,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 14,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-16",
+                "ingredientName": "Ragù Rustico di Cinghiale",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Grana Padano",
+                "quantity": 0.03,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'cuc-5',
@@ -1698,7 +2848,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 14,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-8",
+                "ingredientName": "Ripieno Zucca e Ricotta",
+                "quantity": 0.18,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Burro Versato, Salvia e Grana",
+                "quantity": 0.04,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'cuc-6',
@@ -1709,7 +2877,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 18,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-17",
+                "ingredientName": "Filetto di Manzo (220g)",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-27",
+                "ingredientName": "Funghi Porcini Trifolati",
+                "quantity": 0.08,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'cuc-7',
@@ -1720,7 +2906,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 12,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-15",
+                "ingredientName": "Polenta Calda Tradizionale",
+                "quantity": 0.2,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-17",
+                "ingredientName": "Manzo Stufato all Olio Bresciano",
+                "quantity": 0.22,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
 
   // --------------------------------------------------------------------------
@@ -1735,7 +2939,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 10,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-10",
+                "ingredientName": "Sugo al Pomodoro San Marzano & Basilico",
+                "quantity": 0.12,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Grana Padano",
+                "quantity": 0.02,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'bim-2',
@@ -1746,7 +2968,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 10,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-8",
+                "ingredientName": "Pesto alla Genovese Delicato",
+                "quantity": 0.08,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-7",
+                "ingredientName": "Grana Padano",
+                "quantity": 0.02,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'bim-3',
@@ -1757,7 +2997,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 12,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-19",
+                "ingredientName": "Cotoletta Dorata Croccante",
+                "quantity": 1,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Calde",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'bim-4',
@@ -1768,7 +3026,25 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 12,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-20",
+                "ingredientName": "Polpette di Scottona al Sugo",
+                "quantity": 4,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          },
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Calde",
+                "quantity": 0.15,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
 
   // --------------------------------------------------------------------------
@@ -1783,7 +3059,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 7,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine Fritte Dorate",
+                "quantity": 0.2,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-2',
@@ -1794,7 +3080,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 7,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patatine con Paprika & Spezie",
+                "quantity": 0.2,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-3',
@@ -1805,7 +3101,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-24",
+                "ingredientName": "Patate Rustiche con Buccia",
+                "quantity": 0.2,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-4',
@@ -1816,7 +3122,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-2",
+                "ingredientName": "Mini Panzerotti Pomodoro & Mozzarella",
+                "quantity": 4,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-5',
@@ -1827,7 +3143,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-22",
+                "ingredientName": "Zucchine, Melanzane & Peperoni alla Griglia",
+                "quantity": 0.18,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-6',
@@ -1838,7 +3164,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 7,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-14",
+                "ingredientName": "Gnocco Fritto Dorato al Momento",
+                "quantity": 5,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-7',
@@ -1849,7 +3185,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 8,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-21",
+                "ingredientName": "Stick di Pollo Dorati Croccanti",
+                "quantity": 6,
+                "unit": "pz",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-8',
@@ -1860,7 +3206,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 10,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-11",
+                "ingredientName": "Gamberi e Verdure in Pastella",
+                "quantity": 0.2,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
   {
     id: 'fri-9',
@@ -1871,7 +3227,17 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 12,
     available: true,
-    recipe: []
+    recipe: [
+    
+          {
+                "ingredientId": "ing-cuc-18",
+                "ingredientName": "Fritto Misto di Pesce Dorato",
+                "quantity": 0.25,
+                "unit": "kg",
+                "isPreBake": false,
+                "sourceDepartment": "cucina"
+          }
+        ]
   },
 
   // --------------------------------------------------------------------------
@@ -1886,7 +3252,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 1,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-2',
@@ -1897,7 +3265,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 1,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-3',
@@ -1908,7 +3278,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 1,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-4',
@@ -1919,7 +3291,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-5',
@@ -1930,7 +3304,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 3,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-6',
@@ -1941,7 +3317,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 3,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-7',
@@ -1952,7 +3330,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 3,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-8',
@@ -1963,7 +3343,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-9',
@@ -1974,7 +3356,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-10',
@@ -1985,7 +3369,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bev-11',
@@ -1996,7 +3382,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
 
   // --------------------------------------------------------------------------
@@ -2011,7 +3399,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-2',
@@ -2022,7 +3412,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-3',
@@ -2033,7 +3425,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-4',
@@ -2044,7 +3438,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-5',
@@ -2055,7 +3451,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-6',
@@ -2066,7 +3464,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-7',
@@ -2077,7 +3477,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-8',
@@ -2088,7 +3490,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-9',
@@ -2099,7 +3503,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-10',
@@ -2110,7 +3516,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'bir-11',
@@ -2121,7 +3529,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
 
   // --------------------------------------------------------------------------
@@ -2136,7 +3546,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-2',
@@ -2147,7 +3559,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-3',
@@ -2158,7 +3572,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-4',
@@ -2169,7 +3585,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-5',
@@ -2180,7 +3598,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-6',
@@ -2191,7 +3611,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-7',
@@ -2202,7 +3624,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-8',
@@ -2213,7 +3637,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-9',
@@ -2224,7 +3650,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-10',
@@ -2235,7 +3663,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-11',
@@ -2246,7 +3676,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-12',
@@ -2257,7 +3689,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-13',
@@ -2268,7 +3702,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-14',
@@ -2279,7 +3715,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-15',
@@ -2290,7 +3728,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
   {
     id: 'vin-16',
@@ -2301,7 +3741,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'bar',
     prepTimeMinutes: 2,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-bar-1', ingredientName: 'Bottiglia / Calice Bar', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'bar' }
+    ]
   },
 
   // --------------------------------------------------------------------------
@@ -2364,7 +3806,9 @@ export const initialMenuItems: MenuItem[] = [
     targetDepartment: 'cucina',
     prepTimeMinutes: 4,
     available: true,
-    recipe: []
+    recipe: [
+      { ingredientId: 'ing-cuc-8', ingredientName: 'Dessert Artigianale della Casa', quantity: 1, unit: 'pz', isPreBake: false, sourceDepartment: 'cucina' }
+    ]
   }
 ];
 

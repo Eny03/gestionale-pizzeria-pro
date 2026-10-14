@@ -66,6 +66,7 @@ export interface RecipeItem {
   quantity: number; // Quantità usata per porzione
   unit: string;
   isPreBake: boolean; // Se deve apparire in pre-cottura o post-cottura
+  sourceDepartment?: StationTarget; // 'pizzeria' | 'cucina' | 'bar'
 }
 
 export type MenuCategory =
@@ -98,11 +99,13 @@ export interface IngredientDelta {
   ingredientId: string;
   name: string;
   priceDelta: number;
+  sourceDepartment?: StationTarget;
+  timing?: 'PRE_COTTURA' | 'POST_COTTURA' | 'DA_CHIEDERE';
 }
 
 export interface OrderItemCustomization {
   addedIngredients: IngredientDelta[];
-  removedIngredients: { ingredientId: string; name: string }[];
+  removedIngredients: { ingredientId: string; name: string; sourceDepartment?: StationTarget }[];
   notes?: string;
   priceDeltaTotal: number;
 }
